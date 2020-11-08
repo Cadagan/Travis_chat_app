@@ -4,13 +4,8 @@ node_js:
 services:
   - docker
 
-before_install:
+before_script:
     sudo apt-get install docker-compose
-
-install:
-    # Docker CFML Server Tests
-  - docker-compose build
-  - docker-compose up -d
 
 script:
   - ls
