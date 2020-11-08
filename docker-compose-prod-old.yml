@@ -6,8 +6,12 @@ services:
     build: ./backend-T0
     ports:
      - 3001:3001
-    env_file:
-      - .env
+    environment:
+      - DATABASE_PORT=5432
+      - DATABASE_HOST=database
+      - DATABASE_DBNAME=postgres
+      - DATABASE_PASSWORD=root
+      - DATABASE_USER=postgres
     volumes:
      - .:/code
      - ./data/certbot/conf:/etc/letsencrypt
