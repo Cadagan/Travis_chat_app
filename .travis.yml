@@ -4,20 +4,25 @@ node_js:
 sudo: required
 services:
   - docker
-  
-env:
-    DOCKER_COMPOSE_VERSION: 1.23.2
 
-before_install:
-    - sudo rm /usr/local/bin/docker-compose
-    - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-    - chmod +x docker-compose
-    - sudo mv docker-compose /usr/local/bin
+
+before_script:
+  - docker-compose up -d --build
+
 
 script:
-  - ls
-  - docker-compose build
-  - docker-compose up -d
+  - docker-compose exec -e DB_USER=postgres backend npm run test
+  - docker-compose exec -e DB_HOST=localhost backend npm run test
+  - docker-compose exec -e DB_DATABASE=postgres backend npm run test
+  - docker-compose exec -e DB_PASSWORD=root backend npm run test
+  - docker-compose exec -e DB_PORT=5432 backend npm run test
+  - docker-compose exec -e BACKEND_HOST=backend backend npm run test
+  - docker-compose exec -e s3_bucket=chat-grupo-21 backend npm run test
+  - docker-compose exec -e DATABASE_PORT=5432 backend npm run test
+  - docker-compose exec -e DATABASE_HOST=grupo21db.c3mk7kgq7w7h.us-east-2.rds.amazonaws.com backend npm run test
+  - docker-compose exec -e DATABASE_DBNAME=postgres backend npm run test
+  - docker-compose exec -e DATABASE_USER=grupo21 backend npm run test
+  - docker-compose exec -e endpoint_aws_comprehend=https://qaoxmqp1g8.execute-api.us-east-2.amazonaws.com/default/nueva-sentiment backend npm run test
   - docker-compose down
     
 
