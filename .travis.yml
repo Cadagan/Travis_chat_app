@@ -10,5 +10,3 @@ branches:
     - master
     - main
     - travis_ci_cd
-intsall:
-  - docker-compose build
