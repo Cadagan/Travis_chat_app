@@ -4,9 +4,11 @@ node_js:
 services:
   - docker
 script:
-  - docker-compose build
+  - echo "fake docker-compose"
 branches:
   only:
     - master
     - main
     - travis_ci_cd
+intsall:
+  - docker-compose build
