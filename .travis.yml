@@ -5,20 +5,29 @@ services:
   - docker
 
 before_install:
-    # Upgrade Docker Compose.
-    - sudo rm /usr/local/bin/docker-compose
-    - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+    # Docker Compose Install 
+    - curl -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
     - chmod +x docker-compose
     - sudo mv docker-compose /usr/local/bin
-    # Upgrade Docker.
-    - sudo apt-get update
-    - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+    # Download and install Docker libs
+    - curl -L https://github.com/Ortus-Solutions/docker-buildfiles/archive/master.zip > docker.zip
+    - unzip docker.zip -d workbench
+    - mv workbench/docker-buildfiles-master workbench/docker
+    # CommandBox Keys
+    - sudo apt-key adv --keyserver keys.gnupg.net --recv 6DA70622
+    - sudo echo "deb http://downloads.ortussolutions.com/debs/noarch /" | sudo tee -a
+        /etc/apt/sources.list.d/commandbox.list
+
+install:
+    # Docker CFML Server Tests
+  - docker-compose build
+  - docker-compose up -d
 
 script:
   - ls
   - docker-compose up -d
   - docker-compose stop
-  
+
 branches:
   only:
     - master
