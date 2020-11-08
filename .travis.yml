@@ -27,8 +27,9 @@ before_install:
     # above.
     - sudo rm /usr/local/bin/docker-compose
     - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-    - chmod +x docker-compose
-    - sudo mv docker-compose /usr/local/bin
+    - sudo chmod +x /usr/local/bin/docker-compose
+    - sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+    # - sudo mv docker-compose /usr/local/bin
     # Check that docker-compose is now running the latest version (or at least the
     # one we specified). This is not to be confused with the version we printed
     # before doing the update.
