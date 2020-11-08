@@ -1,0 +1,252 @@
+* {
+    box-sizing: border-box;
+}
+.background {
+    background-color: #EFF3F7; !important;
+    min-height: 100vh;
+    display: flex;
+    font-weight: 400;
+    font-family: 'Fira Sans', sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6,label,span {
+    font-weight: 500;
+    font-family: 'Fira Sans', sans-serif;
+}
+
+body, html, #root, .auth-wrapper {
+    width: 100%;
+    height: 100%;
+    font-family: 'Poppins', serif;
+}
+
+.navbar-light {
+    background-color: #ffffff;
+    box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
+}
+
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: left;
+    padding-top: 100px;
+}
+
+.auth-inner {
+    width: 450px;
+    margin: auto;
+    background: #ffffff;
+    box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
+    padding: 40px 55px 45px 55px;
+    border-radius: 15px;
+    transition: all .3s;
+}
+
+.auth-wrapper .form-control:focus {
+    border-color: #167bff;
+    box-shadow: none;
+}
+
+.auth-wrapper h3 {
+    text-align: center;
+    margin: 0;
+    line-height: 1;
+    padding-bottom: 20px;
+}
+
+.custom-control-label {
+    font-weight: 400;
+}
+
+.forgot-password,
+.forgot-password a {
+    text-align: right;
+    font-size: 13px;
+    padding-top: 10px;
+    color: #7f7d7d;
+    margin: 0;
+}
+
+.forgot-password a {
+    color: #167bff;
+}
+
+.google-btn {
+    margin: 25px;
+    width: 80%;
+    min-width: 184px;
+    max-width: 184px;
+    height: 42px;
+    background-color: #fcfcfc;
+    border-radius: 2px;
+    box-shadow: 0 3px 4px 0 rgba(0, 0, 0, .2);
+    cursor: pointer;
+    cursor: hand;
+    align-self: center;
+    user-select: none;
+    transition: all 400ms ease 0s;
+    display: flex;
+}
+.google-btn .google-icon-wrapper {
+    position: absolute;
+    margin-top: 1px;
+    margin-left: 1px;
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    user-select: none
+}
+.google-btn .google-icon-svg {
+    position: absolute;
+    margin-top: 11px;
+    margin-left: 11px;
+    width: 18px;
+    height: 18px;
+    user-select: none
+}
+.google-btn .btn-text {
+    float: right;
+    margin: 11px 14px 40px 40px;
+    color: #757575;
+    font-size: 14px;
+    letter-spacing: .2px;
+    font-family: Roboto;
+    user-select: none
+}
+.google-btn:hover {
+    box-shadow: 0 3px 8px rgba(117, 117, 117, .5);
+    user-select: none
+}
+.google-btn:active {
+    box-shadow: 0 1px 1px #757575;
+    background: #F8F8F8;
+    color: #fff;
+    user-select: none
+}
+
+.normal-btn {
+    margin: 25px;
+    width: auto;
+    display: inline-block;
+    min-width: auto;
+    max-width: 184px;
+    height: 42px;
+    background-color: #fcfcfc;
+    border-radius: 2px;
+    box-shadow: 0 10px 12px 0 rgba(0, 0, 0, .8);
+    cursor: pointer;
+    cursor: hand;
+    align-self: center;-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    transition: all 400ms ease 0s
+}
+.normal-btn .btn-text {
+    float: left;
+    margin: 11px 14px 11px 14px;
+    color: #757575;
+    font-size: 14px;
+    letter-spacing: .2px;
+    font-family: Poppins, serif;
+    user-select: none
+}
+.normal-btn:hover {
+    box-shadow: 0 5px 8px rgba(117, 117, 117, .5);
+    user-select: none
+}
+.normal-btn:active {
+    box-shadow: 0 1px 1px #757575;
+    background: #F8F8F8;
+    color: #fff;
+    user-select: none
+}
+
+.viewport {
+    background-color: #EFF3F7;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    padding-top: 50px;
+}
+
+.big-padding{
+    padding: 30px 20px;
+}
+.small-padding{
+    padding: 25px 10px;
+}
+
+.container-rounded {
+    background-color: white;
+    border-radius: 10px;
+    width: 50%;
+
+    margin: 0 auto;
+    text-align: left;
+}
+
+.separate-small {
+    margin-top: 20px;
+}
+
+.float-left{
+    float: left;
+}
+
+.menu-room-name{
+    float: left;
+}
+
+.menu-room-id{
+    float: left;
+}
+
+.join-chatroom-btn {
+    float: right;
+}
+
+.footer{
+    margin-top: 10px;
+    padding: 20px 30px;
+}
+
+.rooms-viewport{
+    max-height: 350px;
+    overflow: scroll;
+
+    margin-top: 20px;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+
+.font-size-20{
+    font-size: 20pt;
+}
+
+.font-size-10{
+    font-size: 10pt;
+}
+
+.font-size-13{
+    font-size: 13pt;
+}
+.font-size-15{
+    font-size: 15pt;
+}
+.font-size-17{
+    font-size: 17pt;
+}
+.center-text{
+    text-align: center;
+}
+
+.bold-text{
+    font-weight: bold;
+}
