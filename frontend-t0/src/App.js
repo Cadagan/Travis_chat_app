@@ -7,6 +7,7 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import {Button} from 'react-bootstrap';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import Cookies from 'universal-cookie';
+import {userJoinEvent} from "./components/events/chatroomEvents";
 const cookies = new Cookies();
 
 export const LOCAL = true;
@@ -33,6 +34,7 @@ class App extends React.Component {
     } else {
       console.log(`getting username, sessionID: ${sessionID}`);
       this.getUsername();
+      userJoinEvent(this.state.name);
     }
   }
 

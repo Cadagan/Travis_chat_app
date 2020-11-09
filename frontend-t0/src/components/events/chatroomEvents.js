@@ -1,16 +1,15 @@
 import PgpKey, {pgpKey, userKeys} from "../services/PGPKey";
 
-export function userJoinEvent( user, onDone){
-    let userRoomId = user.username+"#"+user.userId;
+export function userJoinEvent(username, onDone){
     //We create a pgp key.
-    PgpKey.generate(user.username+"#"+user.userId, key => {
+    PgpKey.generate(username, key => {
         pgpKey = key;
-        onDone(userRoomId, key);
+        //onDone(userRoomId, key);
     })
 }
 export function userJoinChatroomEvent(room, user, onDone){
     //We send our public key to everyone else, and recieve every other participants public key.
-    //TODO
+    //TODO do this.
 }
 
 export function userLeaveChatroom(user){
@@ -23,7 +22,7 @@ export function onMessageRecieved(message, onDone){
         PgpKey.load(message.publicKey, key=>{
             userKeys.push({username: message.username, key: key});
         });
-        //We send ours to everyone.
+        //We send ours to everyone. TODO DO THIS
     } else {
         if (pgpKey.canDecrypt()) {
             //We just decrypt with our private key.
@@ -39,11 +38,11 @@ export function onMessageRecieved(message, onDone){
 
 export function onMessageSend(message, onDone){
     userKeys.forEach(keyData =>{
-        keyData.key.encrypt(message.text, cipher=> {
-            message.text = cipher;
+        keyData.key.encrypt(message.message, cipher=> {
+            message.message = cipher;
             //Now we can send message to everyone!
-            //TODO SEND MESSAGE ON THE CALLBACK FUNCTION.
-            onDone(message);
+            //We should send it to the one with the keyData though don't we? TODO do this.
+            onDone(message, keyData);
         });
 
     });

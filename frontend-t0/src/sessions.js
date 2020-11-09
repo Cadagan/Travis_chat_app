@@ -30,7 +30,7 @@ function setUsername(newUsername) {
 }
 
 function getUsername() {
-  //return cookies.get('username');
+  return cookies.get('username');
 }
 
 function getToken() {
@@ -49,6 +49,7 @@ module.exports = {
   getSessionID,
   setUsername,
   getUsername,
+  getSessionData,
   getToken,
   setRole,
   getRole,

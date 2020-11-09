@@ -16,10 +16,13 @@ export default class Login extends Component {
         this.onGoogle = this.onGoogle.bind(this);
     }
 
-    handleSubmit(e){
+    handleSubmit(e) {
         e.preventDefault();
-        const data = {username: this.state.username,
-            password: this.state.password};
+        const data = {
+            username: this.state.username,
+            password: this.state.password
+        };
+    }
 
   handleSubmit(e) {
     e.preventDefault();
@@ -61,7 +64,7 @@ export default class Login extends Component {
         window.open("http://localhost:3001/users/oathsignup", "_self");
     }
 
-  render() {
+  render(){
     return (
       <div className={'background'}>
         <div className="auth-wrapper">
@@ -124,9 +127,6 @@ export default class Login extends Component {
                     </div>
                 </div>
             </div>
-          </div>
-        </div>
-      </div>
     );
   }
 }
