@@ -9,7 +9,7 @@ describe("Log Test", function() {
     it("provides a log", function(done) {
         expect(1).to.be.equal(1);
         done();
-    }).catch(done);
+    });
 });
 
 // Completed
