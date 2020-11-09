@@ -1,24 +1,55 @@
-let sessionData = {sessionID: null, username:null};
-console.log("Initializing sessions");
+//import Cookies from 'universal-cookie';
+//const cookies = new Cookies();
+//const cookies = require('universal-cookie');
+let sessionData = {sessionID: null, username: null};
+console.log('Initializing sessions');
 
-function setSessionID(newId){
-    console.log("Setting session id to: "+newId);
-    sessionData.sessionID = newId;
+function setSessionID(newId) {
+  //console.log(cookies);
+  console.log('Setting session id to: ' + newId);
+  sessionData.sessionID = newId.sessionID;
+  sessionData.token = newId.token;
+  //cookies.set('sessionID', newId.sessionID);
+  //cookies.set('token', newId.token);
 }
-function getSessionData(){
-    return sessionData;
-}
-
-function getSessionID(){
-    return sessionData.sessionID;
-}
-
-function setUsername(newUsername){
-    sessionData.username = newUsername;
-}
-
-function getUsername(){
-    return sessionData.username;
+function getSessionData() {
+  return {
+    sessionID: getSessionID(),
+    username: getUsername(),
+    token: getToken(),
+    role: getRole(),
+  };
 }
 
-module.exports = {setSessionID, getSessionID, setUsername, getUsername};
+function getSessionID() {
+  //return cookies.get('sessionID');
+}
+
+function setUsername(newUsername) {
+  //cookies.set('username', newUsername);
+}
+
+function getUsername() {
+  //return cookies.get('username');
+}
+
+function getToken() {
+  //return cookies.get('token');
+}
+
+function setRole(role) {
+  //cookies.set('role', role);
+}
+function getRole() {
+  //return cookies.get('role');
+}
+
+module.exports = {
+  setSessionID,
+  getSessionID,
+  setUsername,
+  getUsername,
+  getToken,
+  setRole,
+  getRole,
+};
