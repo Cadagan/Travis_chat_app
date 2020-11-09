@@ -122,7 +122,9 @@ export default class RoomView extends React.Component{
             .then(r=> r.json())
             .then(r=>{
                     const messages = r;
-                    this.state.messages.map(message => messages.push(message));
+                    this.state.messages.map(message => {
+                        messages.push(message);
+                    });
                     this.setState({messages:[]});
                     this.setState({messages: messages});
                 }
