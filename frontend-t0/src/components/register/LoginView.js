@@ -20,6 +20,7 @@ export default class Login extends Component {
         e.preventDefault();
         const data = {username: this.state.username,
             password: this.state.password};
+        }
 
   handleSubmit(e) {
     e.preventDefault();
@@ -115,15 +116,12 @@ export default class Login extends Component {
               </p>
             </form>
 
-                        <div className={"google-btn"}>
-                            <div className ={"google-icon-wrapper"}>
-                                <img className = "google-icon-svg" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
-                            </div>
-                            <p onClick={this.onGoogle} className="btn-text"><b>Sign in with Google</b></p>
-                        </div>
+                <div className={"google-btn"}>
+                    <div className ={"google-icon-wrapper"}>
+                        <img className = "google-icon-svg" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
                     </div>
+                    <p onClick={this.onGoogle} className="btn-text"><b>Sign in with Google</b></p>
                 </div>
-            </div>
           </div>
         </div>
       </div>

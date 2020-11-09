@@ -52,40 +52,50 @@ passport.use(
         role: null
       };
 
+      console.log("Starting query");
       client.query(query, async(err, queryRes) => {
         if (err) {
-          // Crear usuario
-          try {
-            const saltRounds = 10;
-            bcrypt.genSalt(saltRounds, function(err, salt) {
-              bcrypt.hash(profile.id, salt, function(err, hash) {
-                insertToDatabase(
-                  profile.displayName, profile.displayName, hash, profile.emails[0].value, profile.id
-                ).then(request =>{
-                    //Maybe create a token and send to user?
+          return done(err);
+        
+        } else {
 
-                    jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
-
-                    return done(null, {username: profile.displayName, token: jsonWebToken});
+          console.log(queryRes);
+          
+          if (!queryRes.rowCount) {
+            // Registrar usuario
+            try {
+              const saltRounds = 10;
+              bcrypt.genSalt(saltRounds, function(err, salt) {
+                bcrypt.hash(profile.id, salt, function(err, hash) {
+                  console.log(`Inserting user ${profile.displayName}, ${hash}, ${profile.emails[0].value}, ${profile.id}`);
+                  insertToDatabase(
+                    profile.displayName, profile.displayName, hash, profile.emails[0].value, profile.id
+                  ).then(request =>{
+                      //Maybe create a token and send to user?
+  
+                      jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
+  
+                      return done(null, {username: profile.displayName, token: jsonWebToken});
+                  });
                 });
               });
-            });
-          }
-          catch(e) {
-            return done(e);
-          }
+            } catch(e) {
+              return done(null, false);
+            }
 
-        } else {
-          // Entregar usuario loggeado
-          queryRes.rows.forEach(message=>{
-            user.name = message.name;
-            user.username = message.username;
-            user.role = message.role;
-          });
+          } else {
+             // Usuario registrado
+            queryRes.rows.forEach(message=>{
+              user.name = message.name;
+              user.username = message.username;
+              user.role = message.role;
+            });
 
             jsonWebToken = jwt.sign({name: user.name, username: user.username, role: user.role}, 'Grupo21-arquiSoft');
 
             return done(null, {username: user.username, token: jsonWebToken});
+          }
+          
         }
     });
     }
