@@ -9,6 +9,8 @@
         "test": "mocha"
     },
     "devDependencies": {
-        "mocha": "latest"
+        "mocha": "latest",
+        "chai": "latest",
+        "supertest": "latest"
     }
 }
