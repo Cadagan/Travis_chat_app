@@ -76,7 +76,7 @@ export default class AdminUserView extends React.Component {
     fetch(`${BACKEND_HOST}/admin/users/before/${amount}`, {
       // method is POST!?.
       method: 'POST',
-      body: JSON.stringify(latest),
+      body: JSON.stringify(latest), // I could add jwt here
       headers: {
         'Content-Type': 'application/json',
       },
