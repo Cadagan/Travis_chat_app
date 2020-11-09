@@ -18,10 +18,13 @@ script:
   - docker-compose build
   - docker-compose up -d
   - docker-compose down
-    
 
+before_deploy:
+  - zip -r latest *
+  - mkdir -p dpl_cd_upload
+  - mv latest.zip dpl_cd_upload/latest.zip
+    
 branches:
   only:
-    - master
     - main
-    - travis_ci_cd
+    - deploy
