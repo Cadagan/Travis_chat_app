@@ -20,6 +20,7 @@ export default class Login extends Component {
         e.preventDefault();
         const data = {username: this.state.username,
             password: this.state.password};
+    }
 
   handleSubmit(e) {
     e.preventDefault();
