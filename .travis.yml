@@ -22,6 +22,5 @@ script:
 
 branches:
   only:
-    - master
     - main
-    - travis_ci_cd
+    - continuous
