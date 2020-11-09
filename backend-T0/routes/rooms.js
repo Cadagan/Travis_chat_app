@@ -11,10 +11,15 @@ var accessKeyId= process.env.accessKeyId;
 var secretAccessKey= process.env.secretAccessKey;
 var bucket_used = process.env.s3_bucket;
 const execSync = require('child_process').execSync;
-var myIp = execSync(
-  'curl http://169.254.169.254/latest/meta-data/public-hostname',
-  { encoding: 'utf-8' }
-);
+
+const LOCAL = true;
+
+if (!LOCAL) {
+    var myIp = execSync(
+        'curl http://169.254.169.254/latest/meta-data/public-hostname',
+        { encoding: 'utf-8' }
+    );
+}
 
 
 

@@ -36,8 +36,12 @@ function initialize(server, LOCAL) {
         //io.adapter.clients([room], (err, clients) => {
           //console.log(clients);
     });
-  var backend_socket = io.of('/backend');
-  backend_socket.on('message-added', function(socket){
+    var backend_socket = io.of('/backend');
+    backend_socket.on('connect', (socket) => {
+        socket.join(socket.handshake.query[roomId]);
+        socket.room = socket.handshake.query[roomId];
+    });
+  backend_socket.to(roomId).emit('message-added', function(socket){
     socket.on('message-added', function(message){
       socket.join(message);
 
@@ -47,6 +51,12 @@ function initialize(server, LOCAL) {
       });
     });
   });
+}
+
+function emitAuthMessageToRoom(message, roomId) {
+    io.to(roomId).emit('auth-message', {
+        message: message
+    });
 }
 
 

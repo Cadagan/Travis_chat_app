@@ -6,11 +6,16 @@ const {emitMessageSent} = require("../websocket");
 let AWS = require("aws-sdk");
 const fetch = require('node-fetch');
 const execSync = require('child_process').execSync;
-var myIp = execSync(
-  'curl http://169.254.169.254/latest/meta-data/public-hostname',
-  { encoding: 'utf-8' }
-);
+const LOCAL = true;
 
+// const {LOCAL} = require("../bin/www");
+
+if (!LOCAL) {
+    var myIp = execSync(
+        'curl http://169.254.169.254/latest/meta-data/public-hostname',
+        { encoding: 'utf-8' }
+    );
+}
 
 /* GET home page. */
 router.get('/:roomid/latest/:count', function(req, res, next) {

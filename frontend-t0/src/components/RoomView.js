@@ -5,6 +5,7 @@ import io from "socket.io-client";
 import {BACKEND_HOST, LOCAL} from "../App";
 import axios from 'axios';
 import $ from 'jquery';
+import {onMessageSend} from "./events/chatroomEvents";
 
 
 export default class RoomView extends React.Component{
@@ -22,9 +23,9 @@ export default class RoomView extends React.Component{
         this.getNextMessages = this.getNextMessages.bind(this);
         this.postMessage = this.postMessage.bind(this);
         if(LOCAL){
-            this.socket = io.connect(ENDPOINT, {path: '/backend'});
+            this.socket = io.connect(ENDPOINT, {path: '/backend', query: `roomId=${this.sessionData.roomId}`});
         } else {
-            this.socket = io.connect(ENDPOINT, {path: '/backend', secure: true});
+            this.socket = io.connect(ENDPOINT, {path: '/backend', query: `roomId=${this.sessionData.roomId}`, secure: true});
         }
         console.log("Connected to socket.io endpoint!");
         this.mesRef = React.createRef();
@@ -151,15 +152,18 @@ export default class RoomView extends React.Component{
             message = "Random Number: "+num;
         }
         const data = {username: this.sessionData.name, roomId: this.sessionData.roomId, message: message};
-        fetch(`${BACKEND_HOST}/messages/new`,
-            {
-                method: 'POST', // or 'PUT'
-                body: JSON.stringify(data), // data can be `string` or {object}!
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        this.setState({message: ""});
+        onMessageSend(data, (cipherData, keyData)=>{
+            //TODO keyData should hold the info as to which client this needs to be directed to.
+            fetch(`${BACKEND_HOST}/messages/new`,
+                {
+                    method: 'POST', // or 'PUT'
+                    body: JSON.stringify(cipherData), // data can be `string` or {object}!
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(res=>console.log("Sent message!"));
+            this.setState({message: ""});
+        })
     }
 
     handleChange(event) {
