@@ -64,7 +64,7 @@ passport.use(
                 ).then(request =>{
                     //Maybe create a token and send to user?
 
-                    jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, 'Grupo21-arquiSoft');
+                    jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
 
                     return done(null, {username: profile.displayName, token: jsonWebToken});
                 });
