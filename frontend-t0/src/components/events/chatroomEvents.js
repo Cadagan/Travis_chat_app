@@ -5,7 +5,7 @@ export function userJoinEvent(username, onDone){
     PgpKey.generate(username, key => {
         pgpKey = key;
         //onDone(userRoomId, key);
-    })
+    });
 }
 export function userJoinChatroomEvent(room, user, onDone){
     //We send our public key to everyone else, and recieve every other participants public key.
@@ -20,9 +20,9 @@ export function onMessageRecieved(message, onDone){
     if(message.publicKey) {
         //We save that users public key and we send ours to them.
         PgpKey.load(message.publicKey, key=>{
-            userKeys.push({username: message.username, key: key});
+            userKeys.push({id: key.id, username: message.username, key: key});
         });
-        //We send ours to everyone. TODO DO THIS
+        //We send ours to whoever sent us their public key. TODO DO THIS
     } else {
         if (pgpKey.canDecrypt()) {
             //We just decrypt with our private key.

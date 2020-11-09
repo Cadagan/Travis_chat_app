@@ -7,7 +7,7 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import {Button} from 'react-bootstrap';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import Cookies from 'universal-cookie';
-import {userJoinEvent} from "./components/events/chatroomEvents";
+import {userJoinChatroomEvent, userJoinEvent} from "./components/events/chatroomEvents";
 const cookies = new Cookies();
 
 export const LOCAL = true;
@@ -75,6 +75,9 @@ class App extends React.Component {
   setCurrentRoomId(currentRoomId) {
     this.sessionData = {name: this.state.name, roomId: currentRoomId};
     this.setState({roomId: currentRoomId});
+    userJoinChatroomEvent(currentRoomId, this.sessionData.name, res=>{
+
+    });
   }
 
   setName(name) {

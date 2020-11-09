@@ -23,9 +23,9 @@ export default class RoomView extends React.Component{
         this.getNextMessages = this.getNextMessages.bind(this);
         this.postMessage = this.postMessage.bind(this);
         if(LOCAL){
-            this.socket = io.connect(ENDPOINT, {path: '/backend'});
+            this.socket = io.connect(ENDPOINT, {path: '/backend', query: `roomId=${this.sessionData.roomId}`});
         } else {
-            this.socket = io.connect(ENDPOINT, {path: '/backend', secure: true});
+            this.socket = io.connect(ENDPOINT, {path: '/backend', query: `roomId=${this.sessionData.roomId}`, secure: true});
         }
         console.log("Connected to socket.io endpoint!");
         this.mesRef = React.createRef();
