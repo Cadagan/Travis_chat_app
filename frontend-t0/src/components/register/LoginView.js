@@ -70,6 +70,7 @@ export default class Login extends Component {
     }
 
 
+
     onGoogle() {
         window.open('http://localhost:3001/users/oathsignup', '_self');
         console.log("You clicked google");
