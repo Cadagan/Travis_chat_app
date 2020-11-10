@@ -17,7 +17,7 @@ Array of rooms.
 Array of rooms.
 ```
 ---
-#### URL :${BACKEND_HOST}/editUsername`
+#### URL :${BACKEND_HOST}/admin/editUsername`
 #### POST:
 
 #### Success Response
@@ -44,7 +44,7 @@ router.post('/users/before/:count', function(req, res, next) {
 });
 
 ---
-#### URL :${BACKEND_HOST}/editName`
+#### URL :${BACKEND_HOST}/admin/editName`
 #### POST:
 
 #### Success Response
@@ -64,7 +64,7 @@ router.post('/editName', function(req, res, next) {
 
 ---
 
-#### URL :${BACKEND_HOST}/editEmail`
+#### URL :${BACKEND_HOST}/admin/editEmail`
 #### POST:
 
 #### Success Response
@@ -83,7 +83,7 @@ router.post('/editEmail', function(req, res, next) {
 
 ---
 
-#### URL :${BACKEND_HOST}/editRole`
+#### URL :${BACKEND_HOST}/admin/editRole`
 #### POST:
 
 #### Success Response
@@ -102,7 +102,7 @@ router.post('/editRole', function(req, res, next) {
 
 ---
 
-#### URL :${BACKEND_HOST}/editGoogleid`
+#### URL :${BACKEND_HOST}/admin/editGoogleid`
 #### POST:
 
 #### Success Response
@@ -121,7 +121,7 @@ router.post('/editGoogleid', function(req, res, next) {
 
 ---
 
-#### URL :${BACKEND_HOST}/rooms/deleteRoom`
+#### URL :${BACKEND_HOST}/admin/deleteRoom`
 #### POST:
 
 #### Success Response
@@ -139,7 +139,7 @@ router.post('/deleteRoom', function(req, res, next) {
 
 ---
 
-#### URL :${BACKEND_HOST}/togglePrivate`
+#### URL :${BACKEND_HOST}/admin/togglePrivate`
 #### POST:
 
 #### Success Response
@@ -215,7 +215,7 @@ router.post('/public_key', function(req, res, next) {
 
 ---
 
-#### URL :${BACKEND_HOST}/roooms/:roomid/before/:count`
+#### URL :${BACKEND_HOST}/messages/:roomid/before/:count`
 #### POST:
 
 #### Success Response
@@ -235,7 +235,7 @@ router.post('/:roomid/before/:count', function(req, res, next) {
 
 ---
 
-#### URL :${BACKEND_HOST}/rooms/:roomid/before/:count`
+#### URL :${BACKEND_HOST}/messages/new`
 #### POST:
 
 #### Success Response
@@ -286,7 +286,7 @@ router.post('/new', function(req, res, next) {
 
 ---
 
-#### URL :${BACKEND_HOST}/rooms/:roomid/latest/:count`
+#### URL :${BACKEND_HOST}/messages/:roomid/latest/:count`
 #### GET:
 
 #### Success Response
