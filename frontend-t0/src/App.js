@@ -7,6 +7,8 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import {Button} from 'react-bootstrap';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import Cookies from 'universal-cookie';
+import {userJoinChatroomEvent, userJoinEvent} from "./components/events/chatroomEvents";
+
 const cookies = new Cookies();
 
 export const LOCAL = true;
@@ -15,26 +17,38 @@ export const BACKEND_HOST = LOCAL
   : 'https://www.grupo21.ml';
 
 class App extends React.Component {
+
   constructor(props) {
     super(props);
-    this.state = {roomId: -1, name: ''};
+    this.state = {roomId: -1, name: '', roomPassword: ''};
     this.setCurrentRoomId = this.setCurrentRoomId.bind(this);
-    this.sessionData = {name: this.state.name, roomId: this.state.roomId};
+    this.setRoomPassword = this.setRoomPassword.bind(this);
+    this.sessionData = {
+      name: this.state.name,
+      roomId: this.state.roomId,
+      roomPassword: this.state.roomPassword,
+    };
     this.addNotification = this.addNotification.bind(this);
     this.removeSession = this.removeSession.bind(this);
-    this.setCurrentRoomIdToAdminUserView = this.setCurrentRoomIdToAdminUserView.bind(this);
+    this.setCurrentRoomIdToAdminUserView = this.setCurrentRoomIdToAdminUserView.bind(
+      this,
+    );
   }
 
   componentDidMount() {
     const sessionID = cookies.get('sessionID');
-    console.log(sessionID);
-    if (sessionID == 'null') {
+    console.log("Session id:",sessionID);
+    if (!sessionID || sessionID==='undefined' || sessionID==='null') {
       this.props.history.push('/sign-up');
     } else {
       console.log(`getting username, sessionID: ${sessionID}`);
       this.getUsername();
+      userJoinEvent(this.state.name, key=>{
+
+      });
     }
   }
+
 
   getUsername() {
     /*fetch(`${BACKEND_HOST}/users/username`)
@@ -70,9 +84,18 @@ class App extends React.Component {
         }
     }*/
 
-  setCurrentRoomId(currentRoomId) {
+  setCurrentRoomId(currentRoomId, socket) {
     this.sessionData = {name: this.state.name, roomId: currentRoomId};
     this.setState({roomId: currentRoomId});
+  }
+
+  setRoomPassword(roomPassword) {
+    this.sessionData = {
+      name: this.state.name,
+      roomId: this.state.roomId,
+      roomPassword: roomPassword,
+    };
+    this.setState({roomPassword: roomPassword});
   }
 
   setName(name) {
@@ -121,6 +144,7 @@ class App extends React.Component {
               <MenuView
                 name={this.state.name}
                 setCurrentRoomId={this.setCurrentRoomId}
+                setRoomPassword={this.setRoomPassword}
               />
             ) : this.state.roomId === -2 ? (
               <AdminUserView
