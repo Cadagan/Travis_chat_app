@@ -20,8 +20,14 @@ script:
   - docker-compose up -d
   - docker-compose down
     
+after_success:
+  - pip install --user awscli 
+  - export PATH=$PATH:$HOME/.local/bin
+  - aws autoscaling set-desired-capacity --region=$AWS_DEFAULT_REGION --auto-scaling-group-name $AUTO_SCALING_GROUP_NAME --desired-capacity 2
+  - bash deploy/autoscaling.sh
+  - aws autoscaling set-desired-capacity --region=$AWS_DEFAULT_REGION --auto-scaling-group-name $AUTO_SCALING_GROUP_NAME --desired-capacity 1
+
 branches:
   only:
-    - master
     - main
-    - travis_ci_cd
+    - deployment
