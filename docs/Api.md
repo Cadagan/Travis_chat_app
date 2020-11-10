@@ -157,7 +157,7 @@ router.post('/togglePrivate', function(req, res, next) {
 
 ---
 
-#### URL :${BACKEND_HOST}/editMessage`
+#### URL :${BACKEND_HOST}/admin/editMessage`
 #### POST:
 
 #### Success Response
@@ -176,7 +176,7 @@ router.post('/editMessage', function(req, res, next) {
 
 ---
 
-#### URL :${BACKEND_HOST}/censureMessage`
+#### URL :${BACKEND_HOST}/admin/censureMessage`
 #### POST:
 
 #### Success Response
@@ -194,7 +194,7 @@ router.post('/censureMessage', function(req, res, next) {
 
 ---
 
-#### URL :${BACKEND_HOST}/public_key`
+#### URL :${BACKEND_HOST}/encryption/public_key`
 #### POST:
 
 #### Success Response
