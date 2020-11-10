@@ -18,6 +18,16 @@ export default class MessageView extends React.Component {
             <span className="time_date">
               {' '}
               {this.name} - {this.email} | {this.role}
+              <button
+                type={'submit'}
+                onClick={() => console.log('Clicked censure button')}>
+                Censurar
+              </button>
+              <button
+                type={'submit'}
+                onClick={() => console.log('Clicked modify button')}>
+                Modificar
+              </button>
             </span>
           </div>
         </div>

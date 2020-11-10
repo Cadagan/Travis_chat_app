@@ -7,20 +7,19 @@ import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
 export default class Login extends Component {
-    constructor(props) {
-        super(props);
-        this.setSessionID = props.setSessionID;
-        this.state = {username: "", password:"", remember: false};
-        this.onChange = this.onChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.onGoogle = this.onGoogle.bind(this);
-    }
+  constructor(props) {
+    super(props);
+    this.setSessionID = props.setSessionID;
+    this.state = {username: '', password: '', remember: false};
+    this.onChange = this.onChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.onGoogle = this.onGoogle.bind(this);
+  }
 
-    handleSubmit(e){
-        e.preventDefault();
-        const data = {username: this.state.username,
-            password: this.state.password};
-    }
+  handleSubmit(e) {
+    e.preventDefault();
+    const data = {username: this.state.username, password: this.state.password};
+  }
 
   handleSubmit(e) {
     e.preventDefault();
@@ -57,10 +56,10 @@ export default class Login extends Component {
     }
   }
 
-    onGoogle() {
-        console.log("You clicked google");
-        window.open("http://localhost:3001/users/oathsignup", "_self");
-    }
+  onGoogle() {
+    console.log('You clicked google');
+    window.open('http://localhost:3001/users/oathsignup', '_self');
+  }
 
   render() {
     return (
@@ -116,14 +115,16 @@ export default class Login extends Component {
               </p>
             </form>
 
-                        <div className={"google-btn"}>
-                            <div className ={"google-icon-wrapper"}>
-                                <img className = "google-icon-svg" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
-                            </div>
-                            <p onClick={this.onGoogle} className="btn-text"><b>Sign in with Google</b></p>
-                        </div>
-                    </div>
-                </div>
+            <div className={'google-btn'}>
+              <div className={'google-icon-wrapper'}>
+                <img
+                  className="google-icon-svg"
+                  src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                />
+              </div>
+              <p onClick={this.onGoogle} className="btn-text">
+                <b>Sign in with Google</b>
+              </p>
             </div>
           </div>
         </div>

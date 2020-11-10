@@ -9,6 +9,7 @@ var passport = require('passport');
 var messagesRouter = require('./routes/messages');
 var usersRouter = require('./routes/users');
 var roomsRouter = require('./routes/rooms');
+var adminRouter = require('./routes/admin');
 
 var app = express();
 app.use(cors({
@@ -39,5 +40,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/messages', messagesRouter);
 app.use('/rooms', roomsRouter);
 app.use('/users', usersRouter);
+app.use('/admin', adminRouter);
 
 module.exports = app;
