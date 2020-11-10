@@ -1,16 +1,17 @@
 import React from 'react';
 import RoomMenuComponent from './RoomMenuComponent';
 import {BACKEND_HOST} from '../App';
-import {Form} from 'react-bootstrap';
+import {Form, Button} from 'react-bootstrap';
 
 export default class MenuView extends React.Component {
   constructor(props) {
     super(props);
     this.name = props.name;
-    this.state = {newRoomName: '', loadingRooms: true, rooms: []};
+    this.state = {newRoomName: '', loadingRooms: true, rooms: [], privateForm: false};
     this.setCurrentRoomId = props.setCurrentRoomId;
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.toggleFormState = this.toggleFormState.bind(this);
   }
 
   componentDidMount() {
@@ -42,6 +43,10 @@ export default class MenuView extends React.Component {
       this.loadRooms();
     });
     this.setState({newRoomName: ''});
+  }
+
+  toggleFormState(event){
+    this.setState({privateForm: !this.state.privateForm});
   }
 
   render() {
@@ -82,29 +87,39 @@ export default class MenuView extends React.Component {
 
           <div className={'form'}>
             <Form onSubmit={this.handleSubmit}>
-              <Form.Group>
-                <Form.Control
-                  type="text"
-                  placeholder="Type the name here..."
-                  onChange={this.handleChange}
-                  id={'room-name-input'}
-                  name={'name'}
-                  value={this.state.newRoomName}
-                />
-              </Form.Group>
-              <input type="submit" value="CrearPublica" />
-              <Form.Group>
-                <Form.Control
-                  type="text"
-                  placeholder="Type the name here..."
-                  onChange={this.handleChange}
-                  id={'room-name-input'}
-                  name={'name'}
-                  value={this.state.newRoomName}
-                />
-              </Form.Group>
-              <input type="submit" value="CrearPrivada" />
+              {this.state.privateForm?
+                  <div>
+                  <Form.Group>
+                    <Form.Control
+                        type="text"
+                        placeholder="Type the name here..."
+                        onChange={this.handleChange}
+                        id={'room-name-input'}
+                        name={'name'}
+                        value={this.state.newRoomName}
+                    />
+                  </Form.Group>
+                  <input type="submit" value="CrearPrivada" />
+                  </div>
+                  :
+                  <div>
+                    <Form.Group>
+                      <Form.Control
+                          type="text"
+                          placeholder="Type the name here..."
+                          onChange={this.handleChange}
+                          id={'room-name-input'}
+                          name={'name'}
+                          value={this.state.newRoomName}
+                      />
+                    </Form.Group>
+                    <input type="submit" value="CrearPublica" />
+                  </div>
+              }
             </Form>
+          </div>
+          <div>
+            <Button onClick={this.toggleFormState}>{this.state.privateForm?"Private Form" : "Public Form"}</Button>
           </div>
         </div>
         {}
