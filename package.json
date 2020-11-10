@@ -1,0 +1,15 @@
+{
+    "name": "chat_app",
+    "version": "2.0.0",
+    "description": "chat_app",
+    "directories": {
+        "test": "./test"
+    },
+    "scripts": {
+        "test": "mocha"
+    },
+    "devDependencies": {
+        "mocha": "latest",
+        "chai": "latest"
+    }
+}
