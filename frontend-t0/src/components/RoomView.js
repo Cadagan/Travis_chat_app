@@ -1,13 +1,15 @@
 import React, {useRef} from 'react';
-import MessageView from "./MessageView";
-import { animateScroll } from "react-scroll";
-import io from "socket.io-client";
-import {BACKEND_HOST, LOCAL} from "../App";
+import MessageView from './MessageView';
+import {animateScroll} from 'react-scroll';
+import io from 'socket.io-client';
+import {BACKEND_HOST, LOCAL} from '../App';
 import axios from 'axios';
 import $ from 'jquery';
+import {onMessageRecieved, onMessageSend, userJoinChatroomEvent} from "./events/chatroomEvents";
+import {pgpKey} from "./services/PGPKey";
 
 
-export default class RoomView extends React.Component{
+export default class RoomView extends React.Component {
     constructor(props) {
         super(props);
         const ENDPOINT = `${BACKEND_HOST}`;
@@ -19,12 +21,13 @@ export default class RoomView extends React.Component{
         this.handleChange = this.handleChange.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
         this.messageAdded = this.messageAdded.bind(this);
+        this.authMessage = this.authMessage.bind(this);
         this.getNextMessages = this.getNextMessages.bind(this);
         this.postMessage = this.postMessage.bind(this);
         if(LOCAL){
-            this.socket = io.connect(ENDPOINT, {path: '/backend'});
+            this.socket = io.connect(ENDPOINT, {path: '/backend', query: `roomId=${this.sessionData.roomId}`});
         } else {
-            this.socket = io.connect(ENDPOINT, {path: '/backend', secure: true});
+            this.socket = io.connect(ENDPOINT, {path: '/backend', query: `roomId=${this.sessionData.roomId}`, secure: true});
         }
         console.log("Connected to socket.io endpoint!");
         this.mesRef = React.createRef();
@@ -88,11 +91,28 @@ export default class RoomView extends React.Component{
     };
 
     componentDidMount() {
+        this.socket.on("auth-message", this.authMessage);
+        this.socket.on("message-added", this.messageAdded);
+        if(this.sessionData.roomId>=0){
+            userJoinChatroomEvent(this.sessionData.roomId, this.sessionData.username,this.socket, res=>{
+
+            });
+        }
         this.loadMessages(25);
         this.getRoomImage();
-        this.socket.on("message-added", this.messageAdded);
         setTimeout(this.scrollToBottom, 50);
     }
+
+    authMessage(message){
+        console.log("We're exchanging public keys.");
+        onMessageRecieved(message, this.socket,sendBack=>{
+            console.log("Sending back our key!");
+            userJoinChatroomEvent(this.sessionData.roomId, this.sessionData.username, this.socket, res=>{
+
+            });
+        });
+    }
+
 
     scrollToBottom = () => {
         if(this.mesRef.current!==null) {
@@ -108,31 +128,18 @@ export default class RoomView extends React.Component{
             this.getNextMessages(25);
         }
     }
-
-    getNextMessages(amount) {
-        const latest = this.state.messages[0];
-        fetch(`${BACKEND_HOST}/messages/${this.sessionData.roomId}/before/${amount}`,{
-            method: "POST",
-            body: JSON.stringify(latest),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(r=> r.json())
-            .then(r=>{
-                    const messages = r;
-                    this.state.messages.map(message => messages.push(message));
-                    this.setState({messages:[]});
-                    this.setState({messages: messages});
-                }
-            );
-    }
-
     loadMessages(amount){
         fetch(`${BACKEND_HOST}/messages/${this.sessionData.roomId}/latest/${amount}`)
             .then( r => r.json())
             .then(res => {
-                this.setState({messages: res, loadingMessages: false});
+                const unciphered_messages = [];
+                res.forEach(message=> {
+                    onMessageRecieved(message, this.socket,cipherMessage=>{
+                        unciphered_messages.push(cipherMessage);
+                    })
+                });
+
+                this.setState({messages: unciphered_messages, loadingMessages: false});
             });
     }
 
@@ -150,34 +157,64 @@ export default class RoomView extends React.Component{
             num = ~~num;
             message = "Random Number: "+num;
         }
-        const data = {username: this.sessionData.name, roomId: this.sessionData.roomId, message: message};
-        fetch(`${BACKEND_HOST}/messages/new`,
-            {
-                method: 'POST', // or 'PUT'
-                body: JSON.stringify(data), // data can be `string` or {object}!
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        this.setState({message: ""});
+        const data = {username: this.sessionData.name, roomId: this.sessionData.roomId, message: message, encrypted: false, sender: pgpKey.id()};
+        onMessageSend(data, (cipherData, keyData)=>{
+            fetch(`${BACKEND_HOST}/messages/new`,
+                {
+                    method: 'POST', // or 'PUT'
+                    body: JSON.stringify(cipherData), // data can be `string` or {object}!
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(res=>console.log("Sent message!"));
+            this.setState({message: ""});
+        })
     }
 
-    handleChange(event) {
-        this.setState({message: event.target.value});
-    }
 
     messageAdded(message) {
+        console.log("A new message is arriving!", message);
         if(message.roomId === this.sessionData.roomId){
             if(message.message.includes(`@${this.sessionData.name}`)){
                 this.addNotification(message.message);
                 //We send a ping to the backend saying we got the mention.
             }
             const messages = this.state.messages;
-            messages.push(message);
+
+            onMessageRecieved(message, this.socket,cipherMessage=>{
+                console.log(cipherMessage);
+                messages.push(cipherMessage);
+            })
             this.setState({messages: messages});
             this.scrollToBottom();
+            setTimeout(()=>this.forceUpdate(),100);
         }
     }
+  getNextMessages(amount) {
+    const latest = this.state.messages[0];
+    fetch(
+      `${BACKEND_HOST}/messages/${this.sessionData.roomId}/before/${amount}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(latest),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+      .then(r => r.json())
+      .then(r => {
+        const messages = r;
+        this.state.messages.map(message => messages.push(message));
+        this.setState({messages: []});
+        this.setState({messages: messages});
+      });
+  }
+
+
+  handleChange(event) {
+    this.setState({message: event.target.value});
+  }
 
     getRoomImage(){
         fetch(`${BACKEND_HOST}/rooms/${this.sessionData.roomId}/image`)
@@ -188,54 +225,80 @@ export default class RoomView extends React.Component{
     }
 
 
-    render() {
-        return (
-            <div className="container">
-                <div className={"text-center inline-horizontal"}>
-                    <button className="back-button" type="button" onClick={()=> this.setCurrentRoomId(-1)}>Back</button>
-                    <h3 className="text-center">Sala: {this.roomName}</h3>
-                </div>
-                <div>
-                    <img src={this.state.roomImage} alt={"Logo"}/>
-                </div>
-                <div className="card-body">
-                    <div id="oc-alert-container"></div>
-                    <p className="card-text">Please upload an image for this chat</p>
-                    <input type="file" onChange={this.singleFileChangedHandler}/>
-                    <div className="mt-5">
-                        <button className="btn btn-info" onClick={this.singleFileUploadHandler}>Upload!</button>
-                    </div>
-                </div>
-                <div className={"messaging"}>
-                    <div className={"inbox_msg"} onScroll={this.handleScroll}>
-                        <div className="mesgs">
-                            <div className="msg_history" ref={this.mesRef}>
-			        {this.state.loadingMessages ?
-                                    <h1>Loading messages...</h1> :
-                                    this.state.messages.map((message,i) => {
-                                        return (
-                                            <MessageView messageData={{
-                                                message: message.message,
-                                                time: message.time,
-                                                date: message.date,
-                                                username: message.username
-                                            }} key={i}/>
-                                        )
-                                    })
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    <div className="type_msg">
-                        <div className="input_msg_write">
-                            <form onSubmit={this.postMessage}>
-                                <input type="text" className="write_msg" value={this.state.message}  onChange={this.handleChange} placeholder="Type a message"/>
-                                <button className="msg_send_btn" type="button" onClick={()=>this.postMessage()}>Send</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+  render() {
+    return (
+      <div className="container">
+        <div className={'text-center inline-horizontal'}>
+          <button
+            className="back-button"
+            type="button"
+            onClick={() => this.setCurrentRoomId(-1)}>
+            Back
+          </button>
+          <h3 className="text-center">Sala: {this.roomName}</h3>
+        </div>
+        <div>
+          <img src={this.state.roomImage} alt={'Logo'} />
+        </div>
+        <div className="card-body">
+          <div id="oc-alert-container"></div>
+          <p className="card-text">Please upload an image for this chat</p>
+          <input type="file" onChange={this.singleFileChangedHandler} />
+          <div className="mt-5">
+            <button
+              className="btn btn-info"
+              onClick={this.singleFileUploadHandler}>
+              Upload!
+            </button>
+          </div>
+        </div>
+        <div className={'messaging'}>
+          <div className={'inbox_msg'} onScroll={this.handleScroll}>
+            <div className="mesgs">
+              <div className="msg_history" ref={this.mesRef}>
+                {this.state.loadingMessages ? (
+                  <h1>Loading messages...</h1>
+                ) : (
+                  this.state.messages.map((message, i) => {
+                    return (
+                      <MessageView
+                        messageData={{
+                          message: message.message,
+                          time: message.time,
+                          date: message.date,
+                          username: message.username,
+                          censured: message.censured,
+                          id: message.id,
+                        }}
+                        key={i}
+                      />
+                    );
+                  })
+                )}
+              </div>
             </div>
-        )
-    }
-};
+          </div>
+          <div className="type_msg">
+            <div className="input_msg_write">
+              <form onSubmit={this.postMessage}>
+                <input
+                  type="text"
+                  className="write_msg"
+                  value={this.state.message}
+                  onChange={this.handleChange}
+                  placeholder="Type a message"
+                />
+                <button
+                  className="msg_send_btn"
+                  type="button"
+                  onClick={() => this.postMessage()}>
+                  Send
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
