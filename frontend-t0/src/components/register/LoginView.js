@@ -1,26 +1,28 @@
 import React, {Component} from 'react';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import {BACKEND_HOST} from '../../App';
+import {AUTH_HOST} from '../../App';
 import {setUsername} from '../../sessions';
 import {Switch} from 'react-router-dom';
 import Cookies from 'universal-cookie';
+import axios from 'axios';
 const cookies = new Cookies();
 
 export default class Login extends Component {
     constructor(props) {
         super(props);
         this.setSessionID = props.setSessionID;
-        this.state = {username: "", password:"", remember: false};
+        this.state = {username: "", password:"", remember: false, authResult: {}};
         this.onChange = this.onChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.onGoogle = this.onGoogle.bind(this);
     }
 
-    handleSubmit(e){
-        e.preventDefault();
-        const data = {username: this.state.username,
-            password: this.state.password};
-        }
+  handleSubmit(e){
+      e.preventDefault();
+      const data = {username: this.state.username,
+          password: this.state.password};
+      }
 
   handleSubmit(e) {
     e.preventDefault();
@@ -57,10 +59,25 @@ export default class Login extends Component {
     }
   }
 
-    onGoogle() {
-        console.log("You clicked google");
-        window.open("http://localhost:3001/users/oathsignup", "_self");
-    }
+  onGoogle() {
+      console.log("You clicked google");
+      
+      axios.get(`${AUTH_HOST}/users/oathsignup`, {
+        headers: {
+          'accept': 'application/json',
+          'Accept-Language': 'en-US,en;q=0.8',
+          'Content-Type': 'application/json',
+          // 'mode': 'no-cors'
+        },
+        withCredentials: true,
+      }).then(res => {
+        if(res.status===200) {
+          console.log("HI IM HERE");
+          console.log(res);
+        }
+      });
+
+  }
 
   render() {
     return (

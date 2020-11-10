@@ -61,16 +61,16 @@ services:
     container_name: auth-container
     build: ./authentication
     ports:
-     - 3002:3002
+      - 3002:3002
     environment:
-     - DATABASE_PORT=5432
-     - DATABASE_HOST=database
-     - DATABASE_DBNAME=postgres
-     - DATABASE_USER=postgres
-     - DATABASE_PASSWORD=root
-     
+      - DATABASE_PORT=5432
+      - DATABASE_HOST=database
+      - DATABASE_DBNAME=postgres
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=root
+
     volumes:
-     - .:/code
+      - .:/code
     links:
       - "postgres:database"
     depends_on:
