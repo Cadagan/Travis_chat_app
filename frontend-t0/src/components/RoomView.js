@@ -267,6 +267,8 @@ export default class RoomView extends React.Component {
                           time: message.time,
                           date: message.date,
                           username: message.username,
+                          censured: message.censured,
+                          id: message.id,
                         }}
                         key={i}
                       />
