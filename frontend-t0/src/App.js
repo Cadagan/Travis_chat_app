@@ -8,6 +8,7 @@ import {Button} from 'react-bootstrap';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import Cookies from 'universal-cookie';
 import {userJoinChatroomEvent, userJoinEvent} from "./components/events/chatroomEvents";
+
 const cookies = new Cookies();
 
 export const LOCAL = true;
@@ -16,6 +17,7 @@ export const BACKEND_HOST = LOCAL
   : 'https://www.grupo21.ml';
 
 class App extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {roomId: -1, name: ''};
