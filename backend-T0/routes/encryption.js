@@ -27,10 +27,6 @@ router.post('/public_key', function(req, res, next) {
   console.log(`Public Key arrived from ${username}: ${publicKey}`);
   const message = {publicKey: publicKey, username: username};
   emitAuthMessageToRoom(message, roomId);
-  io.on('auth-message-response', res=>{
-    console.log(res);
-  });
-  //TODO Await their response?
   res.append('CurrentInstance', myIp);
   res.status(200).send(object);
 });

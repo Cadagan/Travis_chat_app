@@ -98,7 +98,8 @@ export default class RoomView extends React.Component{
     }
 
     authMessage(message){
-        onMessageRecieved(message, publicKey=>{
+        console.log("We're exchanging public keys.");
+        onMessageRecieved(message, this.socket,publicKey=>{
             io.emit('auth-message-response', {
                 message: {publicKey:publicKey, username: this.sessionData.name}
             });
@@ -135,7 +136,7 @@ export default class RoomView extends React.Component{
                     const messages = r;
                     const unciphered_messages = [];
                     messages.forEach(message=> {
-                        onMessageRecieved(message, cipherMessage=>{
+                        onMessageRecieved(message, this.socket,cipherMessage=>{
                             unciphered_messages.push(cipherMessage);
                         })
                     });
@@ -154,7 +155,7 @@ export default class RoomView extends React.Component{
             .then(res => {
                 const unciphered_messages = [];
                 res.forEach(message=> {
-                    onMessageRecieved(message, cipherMessage=>{
+                    onMessageRecieved(message, this.socket,cipherMessage=>{
                         unciphered_messages.push(cipherMessage);
                     })
                 });
@@ -179,7 +180,6 @@ export default class RoomView extends React.Component{
         }
         const data = {username: this.sessionData.name, roomId: this.sessionData.roomId, message: message};
         onMessageSend(data, (cipherData, keyData)=>{
-            //TODO keyData should hold the info as to which client this needs to be directed to.
             fetch(`${BACKEND_HOST}/messages/new`,
                 {
                     method: 'POST', // or 'PUT'
@@ -204,11 +204,13 @@ export default class RoomView extends React.Component{
             }
             const messages = this.state.messages;
 
-            onMessageRecieved(message, cipherMessage=>{
+            onMessageRecieved(message, this.socket,cipherMessage=>{
+                console.log(cipherMessage);
                 messages.push(cipherMessage);
             })
             this.setState({messages: messages});
             this.scrollToBottom();
+            setTimeout(()=>this.forceUpdate(),100);
         }
     }
 

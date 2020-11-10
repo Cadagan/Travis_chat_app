@@ -1,17 +1,15 @@
-import PgpKey, {pgpKey, userKeys} from "../services/PGPKey";
+import PgpKey, {get_public_key_data, pgpKey, userKeys} from "../services/PGPKey";
 import {BACKEND_HOST} from "../../App";
 
 export function userJoinEvent(username, onDone){
     //We create a pgp key.
     PgpKey.generate(username, key => {
-        console.log();
         //pgpKey = key;
         onDone(key);
     });
 }
 export function userJoinChatroomEvent(room, user, socket, onDone){
-    //We send our public key to everyone else, and recieve every other participants public key. TODO backend side.
-    const public_key = {publicKey: pgpKey.public(), username: user, roomId: room};
+    const public_key = get_public_key_data(user, room);
     fetch(`${BACKEND_HOST}/encryption/public_key`,
         {
             method: 'POST', // or 'PUT'
@@ -22,37 +20,38 @@ export function userJoinChatroomEvent(room, user, socket, onDone){
         })
         .then(res=>res.json())
         .then(data=>{
-            data.keyData.forEach(message=>{
-                PgpKey.load(message.publicKey, key=>{
-                    userKeys.push({id: key.id(), username: message.username, key: key});
-                });
-            });
+            //We do nothing here lmaooo we're getting the keys another way.
         });
-
-    io.on('auth-message-response', res=>{
-        console.log(res);
-    });
 }
 
 export function userLeaveChatroom(user){
     //Probably remove the public key?
 }
 
-export function onMessageRecieved(message, onDone){
+export function onMessageRecieved(message, socket, onDone){
+    let sender = userKeys[message.sender];
     if(message.publicKey) {
+        console.log("Receiving message with public key!");
+        if(sender) return;
         console.log("Recieved public key! Saving...");
         //We save that users public key and we send ours to them.
         PgpKey.load(message.publicKey, key=>{
-            userKeys.push({id: key.id(), username: message.username, key: key});
+            let isMyKey = pgpKey.id() === key.id();
+            userKeys[key.id()] = isMyKey ? pgpKey : key;
+            if(!isMyKey){
+                //We send ours back. TODO do this.
+                const publicKey = pgpKey.public();
+                const sendBack = {publicKey: publicKey, sender: pgpKey.id()}
+
+                onDone(publicKey);
+            }
         });
-        //We send ours to whoever sent us their public key. TODO DO THIS
-        const publicKey = pgpKey.public();
-        onDone(publicKey);
     } else {
         if (pgpKey.canDecrypt()) {
             //We just decrypt with our private key.
-            pgpKey.decrypt(message.text, text => {
-                message.text = text;
+            console.log(pgpKey.public());
+            pgpKey.decrypt(message.message, text => {
+                message.message = text;
                 onDone(message);
             });
         } else {
@@ -62,13 +61,14 @@ export function onMessageRecieved(message, onDone){
 }
 
 export function onMessageSend(message, onDone){
-    userKeys.forEach(keyData =>{
-        keyData.key.encrypt(message.message, cipher=> {
+    Object.keys(userKeys).forEach(keyData =>{
+        userKeys[keyData].encrypt(message.message, cipher=> {
             message.message = cipher;
+            message.sender = pgpKey.id();
+            message.receiver = keyData;
+            onDone(message, );
             //Now we can send message to everyone!
             //We should send it to the one with the keyData though don't we? TODO do this.
-            onDone(message, keyData);
         });
-
     });
 }

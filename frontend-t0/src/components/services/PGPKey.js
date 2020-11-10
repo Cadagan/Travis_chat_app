@@ -1,14 +1,15 @@
 let kbpgp = require('kbpgp');
 export let pgpKey;
-export let userKeys = [];
+export let userKeys = {};
 
 export default class PgpKey {
   constructor(key) {
     this._key = key;
-    pgpKey = this;
     if (this.canDecrypt()) {
       this._ring = new kbpgp.keyring.KeyRing();
       this._ring.add_key_manager(key);
+      pgpKey = this;
+      userKeys[pgpKey.id()] = this;
     }
   }
 
@@ -35,9 +36,14 @@ export default class PgpKey {
   }
 
   decrypt(cipher, onDone) {
-    kbpgp.unbox(
-      {keyfetch: this._ring, armored: cipher, progress_hook: null},
-      (_, literals) => onDone(literals[0].toString()),
+    console.log("Decrypting", cipher);
+    kbpgp.unbox({keyfetch: this._ring, armored: cipher, raw: cipher}, function(err, literals) {
+        if(err){
+          console.log(err, literals);
+        } else {
+          onDone(literals[0].toString());
+        }
+      },
     );
   }
 
@@ -55,4 +61,8 @@ export default class PgpKey {
       onDone(new PgpKey(key)),
     );
   }
+}
+
+export function get_public_key_data(user, room){
+  return {publicKey: pgpKey.public(), username: user, roomId: room};
 }

@@ -3,7 +3,7 @@ var redis = require('socket.io-redis');
 
 function initialize(server, LOCAL) {
     if (LOCAL) {
-        io = require('socket.io')(server, {
+        io = require('socket.io').listen(server, {
             path: '/backend',
             handlePreflightRequest: (req, res) => {
                 const headers = {
@@ -16,7 +16,7 @@ function initialize(server, LOCAL) {
             }
         });
     } else {
-        io = require('socket.io')(5000, {
+        io = require('socket.io').listen(5000, {
             path: '/backend',
             handlePreflightRequest: (req, res) => {
                 const headers = {
@@ -28,33 +28,41 @@ function initialize(server, LOCAL) {
                 res.end();
             }
         });
-      io.adapter(redis({ host: 'master.redis-cluster-2.f8l4hc.use2.cache.amazonaws.com', port: 6379, password: "grupo-21-redis-alkSNsSDAlwijd" }));
+        io.adapter(redis({ host: 'master.redis-cluster-2.f8l4hc.use2.cache.amazonaws.com', port: 6379, password: "grupo-21-redis-alkSNsSDAlwijd" }));
     }
     console.log("Initialized socket.io server");
     io.on('message-added', (socket) => {
         console.log('a message was put onto the database');
         //io.adapter.clients([room], (err, clients) => {
-          //console.log(clients);
+        //console.log(clients);
     });
     var backend_socket = io.of('/backend');
-    backend_socket.on('connect', (socket) => {
-        socket.join(socket.handshake.query[socket.roomId]);
-        socket.room = socket.handshake.query[socket.roomId];
+    backend_socket.on('message-added', function(socket){
+        socket.on('message-added', function(message){
+            socket.join(message);
+
+            //log other socket.io-id's in the message
+            backend_socket.adapter.clients([message], (err, clients) => {
+                console.log(clients);
+            });
+        });
     });
-  backend_socket.on('message-added', function(socket){
-    socket.on('message-added', function(message){
-      socket.join(message);
-      //log other socket.io-id's in the message
-      backend_socket.adapter.clients([message], (err, clients) => {
-        console.log(clients);
-      });
+    backend_socket.emit("auth-message", {
+        message: 'testing'
     });
-  });
 }
 
 function emitAuthMessageToRoom(message, roomId) {
-    io.to(roomId).emit('auth-message', {
+    console.log("Emitting auth-message!")
+    io.emit("auth-message", {
         message: message
+    });
+    io.emit('message-added', {
+        message: 'testing',
+        username: 'testinguser',
+        roomId: roomId,
+        date: "Today",
+        time: 'Today'
     });
 }
 
@@ -91,6 +99,7 @@ function emitMessageSent(message, username, roomId) {
 }
 
 module.exports = {
+    io,
     emitMessageSent,
     emitAuthMessageToRoom,
     initialize
