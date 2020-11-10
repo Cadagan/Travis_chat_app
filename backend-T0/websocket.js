@@ -37,6 +37,17 @@ function initialize(server, LOCAL) {
         //console.log(clients);
     });
     var backend_socket = io.of('/backend');
+    backend_socket.on('auth-message', function(socket){
+        socket.on('auth-message', function(message){
+            console.log("Getting auth message");
+            socket.join(message);
+
+            //log other socket.io-id's in the message
+            backend_socket.adapter.clients([message], (err, clients) => {
+                console.log(clients);
+            });
+        });
+    });
     backend_socket.on('message-added', function(socket){
         socket.on('message-added', function(message){
             socket.join(message);
@@ -47,22 +58,12 @@ function initialize(server, LOCAL) {
             });
         });
     });
-    backend_socket.emit("auth-message", {
-        message: 'testing'
-    });
 }
 
 function emitAuthMessageToRoom(message, roomId) {
     console.log("Emitting auth-message!")
     io.emit("auth-message", {
-        message: message
-    });
-    io.emit('message-added', {
-        message: 'testing',
-        username: 'testinguser',
-        roomId: roomId,
-        date: "Today",
-        time: 'Today'
+        message
     });
 }
 
@@ -98,9 +99,26 @@ function emitMessageSent(message, username, roomId) {
     });
 }
 
+function emitEncryptedMessage(message, username, roomId, sender, receiver){
+    const date = new Date();
+    const hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+    const minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+    const message_time = `${hours}:${minutes}`;
+    io.emit('message-added', {
+        message: message,
+        username: username,
+        roomId: roomId,
+        date: "Today",
+        time: message_time,
+        sender: sender,
+        receiver: receiver,
+    });
+}
+
 module.exports = {
     io,
     emitMessageSent,
+    emitEncryptedMessage,
     emitAuthMessageToRoom,
     initialize
 };

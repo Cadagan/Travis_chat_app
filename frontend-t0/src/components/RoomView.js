@@ -5,7 +5,7 @@ import io from 'socket.io-client';
 import {BACKEND_HOST, LOCAL} from '../App';
 import axios from 'axios';
 import $ from 'jquery';
-import {onMessageRecieved, onMessageSend} from "./events/chatroomEvents";
+import {onMessageRecieved, onMessageSend, userJoinChatroomEvent} from "./events/chatroomEvents";
 import {pgpKey} from "./services/PGPKey";
 
 
@@ -91,18 +91,24 @@ export default class RoomView extends React.Component {
     };
 
     componentDidMount() {
+        this.socket.on("auth-message", this.authMessage);
+        this.socket.on("message-added", this.messageAdded);
+        if(this.sessionData.roomId>=0){
+            userJoinChatroomEvent(this.sessionData.roomId, this.sessionData.username,this.socket, res=>{
+
+            });
+        }
         this.loadMessages(25);
         this.getRoomImage();
-        this.socket.on("message-added", this.messageAdded);
-        this.socket.on("auth-message", this.authMessage);
         setTimeout(this.scrollToBottom, 50);
     }
 
     authMessage(message){
         console.log("We're exchanging public keys.");
-        onMessageRecieved(message, this.socket,publicKey=>{
-            io.emit('auth-message-response', {
-                message: {publicKey:publicKey, username: this.sessionData.name}
+        onMessageRecieved(message, this.socket,sendBack=>{
+            console.log("Sending back our key!");
+            userJoinChatroomEvent(this.sessionData.roomId, this.sessionData.username, this.socket, res=>{
+
             });
         });
     }
@@ -151,8 +157,7 @@ export default class RoomView extends React.Component {
             num = ~~num;
             message = "Random Number: "+num;
         }
-        const data = {username: this.sessionData.name, roomId: this.sessionData.roomId, message: message, encrypted: false};
-        data.sender = pgpKey.id();
+        const data = {username: this.sessionData.name, roomId: this.sessionData.roomId, message: message, encrypted: false, sender: pgpKey.id()};
         onMessageSend(data, (cipherData, keyData)=>{
             fetch(`${BACKEND_HOST}/messages/new`,
                 {
@@ -168,6 +173,7 @@ export default class RoomView extends React.Component {
 
 
     messageAdded(message) {
+        console.log("A new message is arriving!", message);
         if(message.roomId === this.sessionData.roomId){
             if(message.message.includes(`@${this.sessionData.name}`)){
                 this.addNotification(message.message);
@@ -205,60 +211,9 @@ export default class RoomView extends React.Component {
       });
   }
 
-  loadMessages(amount) {
-    fetch(
-      `${BACKEND_HOST}/messages/${this.sessionData.roomId}/latest/${amount}`,
-    )
-      .then(r => r.json())
-      .then(res => {
-        this.setState({messages: res, loadingMessages: false});
-      });
-  }
-
-  postMessage(event) {
-    if (event !== undefined) {
-      event.preventDefault();
-    }
-    let message = this.state.message;
-    if (message === '/happy') {
-      message = ':)';
-    } else if (message === '/sad') {
-      message = ':(';
-    } else if (message === '/random') {
-      let num = Math.random() * 100;
-      num = ~~num;
-      message = 'Random Number: ' + num;
-    }
-    const data = {
-      username: this.sessionData.name,
-      roomId: this.sessionData.roomId,
-      message: message,
-    };
-    fetch(`${BACKEND_HOST}/messages/new`, {
-      method: 'POST', // or 'PUT'
-      body: JSON.stringify(data), // data can be `string` or {object}!
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    this.setState({message: ''});
-  }
 
   handleChange(event) {
     this.setState({message: event.target.value});
-  }
-
-  messageAdded(message) {
-    if (message.roomId === this.sessionData.roomId) {
-      if (message.message.includes(`@${this.sessionData.name}`)) {
-        this.addNotification(message.message);
-        //We send a ping to the backend saying we got the mention.
-      }
-      const messages = this.state.messages;
-      messages.push(message);
-      this.setState({messages: messages});
-      this.scrollToBottom();
-    }
   }
 
     getRoomImage(){

@@ -37,6 +37,10 @@ export function userLeaveChatroom(user){
 }
 
 export function onMessageRecieved(message, socket, onDone){
+    if(message.message.publicKey) {
+        message = message.message;
+        console.log(message);
+    }
     let sender = userKeys[message.sender];
     if (message.publicKey) {
         console.log("Receiving message with public key!");
@@ -50,15 +54,16 @@ export function onMessageRecieved(message, socket, onDone){
                 //We send ours back. TODO do this.
                 const publicKey = pgpKey.public();
                 const sendBack = {publicKey: publicKey, sender: pgpKey.id()}
-
-                onDone(publicKey);
+                onDone(sendBack);
             }
         });
     } else {
         if(privateRoom) {
             if (pgpKey.canDecrypt()) {
                 //We just decrypt with our private key.
+                console.log("Can we decrypt it tho?1")
                 if (message.receiver === pgpKey.id()) {
+                    console.log("Can we decrypt it tho?2")
                     pgpKey.decrypt(message.message, text => {
                         message.message = text;
                         onDone(message);
@@ -74,7 +79,9 @@ export function onMessageRecieved(message, socket, onDone){
 }
 
 export function onMessageSend(message, onDone){
+    console.log("Sending message with: "+privateRoom);
     if(privateRoom) {
+        console.log("Dispatching encrypted messages");
         Object.keys(userKeys).forEach(keyData => {
             userKeys[keyData].encrypt(message.message, cipher => {
                 message.message = cipher;
@@ -82,8 +89,6 @@ export function onMessageSend(message, onDone){
                 message.receiver = keyData;
                 message.encrypted = true;
                 onDone(message,);
-                //Now we can send message to everyone!
-                //We should send it to the one with the keyData though don't we? TODO do this.
             });
         });
     } else {

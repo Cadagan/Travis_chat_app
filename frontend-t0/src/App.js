@@ -87,11 +87,6 @@ class App extends React.Component {
   setCurrentRoomId(currentRoomId, socket) {
     this.sessionData = {name: this.state.name, roomId: currentRoomId};
     this.setState({roomId: currentRoomId});
-    if(currentRoomId>=0) {
-      userJoinChatroomEvent(currentRoomId, this.sessionData.name, socket, res => {
-
-      });
-    }
   }
 
   setRoomPassword(roomPassword) {

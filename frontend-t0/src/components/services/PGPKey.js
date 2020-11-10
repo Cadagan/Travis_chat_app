@@ -64,5 +64,5 @@ export default class PgpKey {
 }
 
 export function get_public_key_data(user, room){
-  return {publicKey: pgpKey.public(), username: user, roomId: room};
+  return {publicKey: pgpKey.public(), username: user, roomId: room, sender: pgpKey.id()};
 }

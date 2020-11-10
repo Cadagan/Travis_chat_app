@@ -1,8 +1,10 @@
+
+
 require('dotenv').config();
 var express = require('express');
 var router = express.Router();
 const {client} = require('../database');
-const {emitMessageSent} = require('../websocket');
+const {emitMessageSent, emitEncryptedMessage} = require('../websocket');
 let AWS = require('aws-sdk');
 const fetch = require('node-fetch');
 const execSync = require('child_process').execSync;
@@ -103,6 +105,9 @@ router.post('/new', function(req, res, next) {
     let message = req.body.message;
     let username = req.body.username;
     let encryption = req.body.encrypted;
+    let sender = req.body.sender;
+    let receiver = req.body.receiver;
+    console.log(req.body);
     if(!encryption) {
         var url = process.env.endpoint_aws_comprehend;
         var mensaje_revisar = {
@@ -139,7 +144,7 @@ router.post('/new', function(req, res, next) {
             console.log(`${error}`);
         });
     } else {
-        emitMessageSent(message, username, roomId);
+        emitEncryptedMessage(message, username, roomId, sender, receiver);
     }
 });
 

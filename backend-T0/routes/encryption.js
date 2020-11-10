@@ -23,9 +23,10 @@ router.post('/public_key', function(req, res, next) {
   let publicKey = req.body.publicKey;
   let username = req.body.username;
   let roomId = req.body.roomId;
+  let sender = req.body.sender;
 
   console.log(`Public Key arrived from ${username}: ${publicKey}`);
-  const message = {publicKey: publicKey, username: username};
+  const message = {publicKey: publicKey, username: username, sender: sender};
   emitAuthMessageToRoom(message, roomId);
   res.append('CurrentInstance', myIp);
   res.status(200).send(object);
