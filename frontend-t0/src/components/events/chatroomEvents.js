@@ -1,6 +1,11 @@
 import PgpKey, {get_public_key_data, pgpKey, userKeys} from "../services/PGPKey";
 import {BACKEND_HOST} from "../../App";
-const privateRoom = true;
+let privateRoom = false;
+
+export function setPrivateRoom(value) {
+    privateRoom = value;
+}
+
 
 export function userJoinEvent(username, onDone){
     //We create a pgp key.

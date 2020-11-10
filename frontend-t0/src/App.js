@@ -98,7 +98,7 @@ class App extends React.Component {
     this.sessionData = {
       name: this.state.name,
       roomId: this.state.roomId,
-      roomPassword,
+      roomPassword: roomPassword,
     };
     this.setState({roomPassword: roomPassword});
   }

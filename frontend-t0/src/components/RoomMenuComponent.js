@@ -1,6 +1,7 @@
 import React from 'react';
 import Cookies from 'universal-cookie';
 import {BACKEND_HOST} from '../App';
+import {setPrivateRoom} from "./events/chatroomEvents";
 const cookies = new Cookies();
 
 export default class RoomMenuComponent extends React.Component {
@@ -34,6 +35,7 @@ export default class RoomMenuComponent extends React.Component {
       .then(r => {
         console.log(r);
         if (r.passwordCorrect === 'true') {
+          setPrivateRoom(this.private);
           this.setCurrentRoomId(this.roomId);
           this.setRoomPassword(this.password);
         } else {
