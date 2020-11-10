@@ -36,7 +36,9 @@ class App extends React.Component {
     } else {
       console.log(`getting username, sessionID: ${sessionID}`);
       this.getUsername();
-      userJoinEvent(this.state.name);
+      userJoinEvent(this.state.name, key=>{
+
+      });
     }
   }
 

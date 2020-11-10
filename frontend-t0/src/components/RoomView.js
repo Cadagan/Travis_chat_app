@@ -5,7 +5,7 @@ import io from "socket.io-client";
 import {BACKEND_HOST, LOCAL} from "../App";
 import axios from 'axios';
 import $ from 'jquery';
-import {onMessageSend} from "./events/chatroomEvents";
+import {onMessageRecieved, onMessageSend} from "./events/chatroomEvents";
 
 
 export default class RoomView extends React.Component{
@@ -122,11 +122,17 @@ export default class RoomView extends React.Component{
             .then(r=> r.json())
             .then(r=>{
                     const messages = r;
+                    const unciphered_messages = [];
+                    messages.forEach(message=> {
+                        onMessageRecieved(message, cipherMessage=>{
+                            unciphered_messages.push(cipherMessage);
+                        })
+                    });
                     this.state.messages.map(message => {
-                        messages.push(message);
+                        unciphered_messages.push(message);
                     });
                     this.setState({messages:[]});
-                    this.setState({messages: messages});
+                    this.setState({messages: unciphered_messages});
                 }
             );
     }
@@ -135,7 +141,14 @@ export default class RoomView extends React.Component{
         fetch(`${BACKEND_HOST}/messages/${this.sessionData.roomId}/latest/${amount}`)
             .then( r => r.json())
             .then(res => {
-                this.setState({messages: res, loadingMessages: false});
+                const unciphered_messages = [];
+                res.forEach(message=> {
+                    onMessageRecieved(message, cipherMessage=>{
+                        unciphered_messages.push(cipherMessage);
+                    })
+                });
+
+                this.setState({messages: unciphered_messages, loadingMessages: false});
             });
     }
 
@@ -179,7 +192,10 @@ export default class RoomView extends React.Component{
                 //We send a ping to the backend saying we got the mention.
             }
             const messages = this.state.messages;
-            messages.push(message);
+
+            onMessageRecieved(message, cipherMessage=>{
+                messages.push(cipherMessage);
+            })
             this.setState({messages: messages});
             this.scrollToBottom();
         }

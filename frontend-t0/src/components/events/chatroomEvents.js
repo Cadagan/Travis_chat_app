@@ -4,13 +4,17 @@ import {BACKEND_HOST} from "../../App";
 export function userJoinEvent(username, onDone){
     //We create a pgp key.
     PgpKey.generate(username, key => {
-        //pgpKey = key;
-        //onDone(userRoomId, key);
+        pgpKey = key;
+        onDone(key);
     });
 }
 export function userJoinChatroomEvent(room, user, onDone){
     //We send our public key to everyone else, and recieve every other participants public key. TODO backend side.
-    fetch(`${BACKEND_HOST}/encryption/public_key`)
+    const public_key = {publicKey: pgpKey.public(), username: user};
+    fetch(`${BACKEND_HOST}/encryption/public_key`, {
+        method: "POST",
+        headers: "application/json",
+        })
         .then(res=>res.json())
         .then(data=>{
             data.keyData.forEach(message=>{
@@ -27,6 +31,7 @@ export function userLeaveChatroom(user){
 
 export function onMessageRecieved(message, onDone){
     if(message.publicKey) {
+        console.log("Recieved public key! Saving...");
         //We save that users public key and we send ours to them.
         PgpKey.load(message.publicKey, key=>{
             userKeys.push({id: key.id(), username: message.username, key: key});
