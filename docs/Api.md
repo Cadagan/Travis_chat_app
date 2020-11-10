@@ -9,31 +9,48 @@
 Array of rooms.
 ```
 ---
-router.get('/users/latest/:count', function(req, res, next) {
-});
+#### URL :${BACKEND_HOST}/users/latest/:count`
+#### GET:
+
+#### Success Response
+```
+Array of rooms.
+```
+---
+#### URL :${BACKEND_HOST}/editUsername`
+#### POST:
+
+#### Success Response
+```
+```
 
 router.post('/editUsername', function(req, res, next) {
   let username = req.body.username;
   let id = req.body.id;
 });
 
+---
+#### URL :${BACKEND_HOST}/users/before/:count`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/users/before/:count', function(req, res, next) {
   let count = req.params.count;
   let id = req.body.id;
 });
 
+---
+#### URL :${BACKEND_HOST}/editName`
+#### POST:
 
-router.post('/users/before/:count', function(req, res, next) {
-  let count = req.params.count;
-  let id = req.body.id;
-});
-
-
-router.post('/editUsername', function(req, res, next) {
-  let username = req.body.username;
-  let id = req.body.id;
-});
+#### Success Response
+```
+Array of rooms.
+```
 
 
 router.post('/editName', function(req, res, next) {
@@ -45,6 +62,15 @@ router.post('/editName', function(req, res, next) {
   }
 });
 
+---
+
+#### URL :${BACKEND_HOST}/editEmail`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/editEmail', function(req, res, next) {
   let email = req.body.email;
@@ -55,6 +81,15 @@ router.post('/editEmail', function(req, res, next) {
   }
 });
 
+---
+
+#### URL :${BACKEND_HOST}/editRole`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/editRole', function(req, res, next) {
   let role = req.body.role;
@@ -65,6 +100,15 @@ router.post('/editRole', function(req, res, next) {
   }
 });
 
+---
+
+#### URL :${BACKEND_HOST}/editGoogleid`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/editGoogleid', function(req, res, next) {
   let googleid = req.body.googleid;
@@ -75,6 +119,15 @@ router.post('/editGoogleid', function(req, res, next) {
   }
 });
 
+---
+
+#### URL :${BACKEND_HOST}/rooms/deleteRoom`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/deleteRoom', function(req, res, next) {
   let roomId = req.body.roomid;
@@ -84,6 +137,15 @@ router.post('/deleteRoom', function(req, res, next) {
   }
 });
 
+---
+
+#### URL :${BACKEND_HOST}/togglePrivate`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/togglePrivate', function(req, res, next) {
   let roomId = req.body.roomid;
@@ -93,6 +155,15 @@ router.post('/togglePrivate', function(req, res, next) {
   }
 });
 
+---
+
+#### URL :${BACKEND_HOST}/editMessage`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/editMessage', function(req, res, next) {
   let messageId = req.body.id;
@@ -103,6 +174,15 @@ router.post('/editMessage', function(req, res, next) {
   }
 });
 
+---
+
+#### URL :${BACKEND_HOST}/censureMessage`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/censureMessage', function(req, res, next) {
   let messageId = req.body.id;
@@ -112,6 +192,15 @@ router.post('/censureMessage', function(req, res, next) {
   }
 });
 
+---
+
+#### URL :${BACKEND_HOST}/public_key`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/public_key', function(req, res, next) {
   let publicKey = req.body.publicKey;
@@ -124,6 +213,15 @@ router.post('/public_key', function(req, res, next) {
   res.status(200).send(object);
 });
 
+---
+
+#### URL :${BACKEND_HOST}/roooms/:roomid/before/:count`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/:roomid/before/:count', function(req, res, next) {
   let count = req.params.count;
@@ -134,6 +232,16 @@ router.post('/:roomid/before/:count', function(req, res, next) {
 
   sendMessages(query, res);
 });
+
+---
+
+#### URL :${BACKEND_HOST}/rooms/:roomid/before/:count`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 
 router.post('/new', function(req, res, next) {
@@ -176,6 +284,15 @@ router.post('/new', function(req, res, next) {
     }
 });
 
+---
+
+#### URL :${BACKEND_HOST}/rooms/:roomid/latest/:count`
+#### GET:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.get('/:roomid/latest/:count', function(req, res, next) {
   let count = req.params.count;
@@ -186,32 +303,15 @@ router.get('/:roomid/latest/:count', function(req, res, next) {
   sendMessages(query, res);
 });
 
+---
 
-router.get(
-  '/oathsignup',
-  passport.authenticate('google', {scope: ['profile', 'email']}),
-);
+#### URL :${BACKEND_HOST}/users/username`
+#### GET:
 
-
-router.get(
-  '/oathsignup/callback',
-  passport.authenticate('google', {
-  }),
-  (req, res, next) => {
-    req.session.save(err => {
-      if (err) {
-        return next(err);
-      }
-
-        sessionID: req.sessionID,
-        username: req.user.username,
-        token: req.user.token,
-      };
-      res.status(200).send(JSON.stringify(data));
-    });
-  },
-);
-
+#### Success Response
+```
+Array of rooms.
+```
 
 router.get('/username', function(req, res, next) {
   if (!req.user) {
@@ -220,6 +320,15 @@ router.get('/username', function(req, res, next) {
   }
 });
 
+---
+
+#### URL :${BACKEND_HOST}/users/signup`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/signup', function(req, res, next) {
   const saltRounds = 10;
@@ -242,6 +351,15 @@ router.post('/signup', function(req, res, next) {
   }
 });
 
+---
+
+#### URL :${BACKEND_HOST}/users/signin`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post(
   '/signin',
@@ -268,6 +386,15 @@ router.post(
   },
 );
 
+---
+
+#### URL :${BACKEND_HOST}/users/logout`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/logout', function(req, res, next) {
   req.logout();
@@ -275,6 +402,15 @@ router.post('/logout', function(req, res, next) {
   res.status(200).send('OK');
 });
 
+---
+
+#### URL :${BACKEND_HOST}/users/signup`
+#### POST:
+
+#### Success Response
+```
+Array of rooms.
+```
 
 router.post('/signup', function(req, res, next) {
   const saltRounds = 10;
@@ -296,33 +432,5 @@ router.post('/signup', function(req, res, next) {
     res.status(422).send('Could not add body to database');
   }
 });
-
-
-router.post(
-  '/signin',
-  passport.authenticate('local', {
-    failureRedirect: '/sign-in',
-    failureFlash: true,
-  }),
-  (req, res, next) => {
-    req.session.save(err => {
-      if (err) {
-        return next(err);
-      }
-
-      getUserRole(req.user.username).then(role => {
-          sessionID: req.sessionID,
-          username: req.user.username,
-          token: req.user.token,
-          role: role,
-        };
-        res.status(200).send(JSON.stringify(data));
-      });
-    });
-  },
-);
-
-
-
 
 ---
