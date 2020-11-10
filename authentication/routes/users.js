@@ -7,9 +7,11 @@ const keys = require("../oauth_keys");
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const jwt = require('jsonwebtoken');
 
+let user_auth = {};
+
 router.use(function(req, res, next) {
   //const allowedOrigins = ['http://localhost:3000', 'http://localhost:8020', 'http://127.0.0.1:9000', 'http://localhost:9000'];
-  console.log(req.headers.origin);
+  console.log(`Origin request: ${req.headers.origin}`);
   res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // update to match the domain you will make the request from
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -93,11 +95,22 @@ passport.use(
   )
 );
 
+router.get("/login/success", function(req, res) {
+  console.log("/login/success")
+  console.log(user_auth);
+  if (user_auth){
+    res.status(200).send(JSON.stringify(user_auth));
+  }
+})
+
 router.get("/oathsignup", passport.authenticate("google", {scope: ['profile', 'email']}));
 
 router.get(
   '/oathsignup/callback',
   function(req, res, next) {
+
+    // console.log('REQ:')
+    // console.log(req);
 
     passport.authenticate('google', { 
       // TODO : http://localhost:3000 -> Local
@@ -107,10 +120,12 @@ router.get(
           if (err) {
               return next(err);
           }
+          //req.body = data
           const data = {sessionID: req.sessionID, username: user.username, token: user.token};
-          res.status(200).send(JSON.stringify(data));
+          user_auth = data;
+          // res.status(200).send(JSON.stringify(data));
           // return 
-          // res.redirect('http://localhost:3000')
+          res.redirect('http://localhost:3000/sign-in');
       });
     })(req, res, next);
   });

@@ -12,11 +12,27 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.setSessionID = props.setSessionID;
-        this.state = {username: "", password:"", remember: false, authResult: {}};
+        this.state = {username: "", password:"", remember: false, authResult: false};
         this.onChange = this.onChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.onGoogle = this.onGoogle.bind(this);
     }
+
+  async componentDidMount() {
+    axios.get(`${AUTH_HOST}/users/login/success`, {
+      headers: {
+        'accept': 'application/json',
+        'Accept-Language': 'en-US,en;q=0.8',
+        'Content-Type': 'application/json',
+        // 'mode': 'no-cors'
+      }
+    }).then(res => {
+      if(res.status===200) {
+        console.log("Responde did Mount");
+        console.log(res);
+      }
+    });
+  }
 
   handleSubmit(e){
       e.preventDefault();
@@ -61,7 +77,10 @@ export default class Login extends Component {
 
   onGoogle() {
       console.log("You clicked google");
-      
+
+      window.open(`${AUTH_HOST}/users/oathsignup`, "_self");
+
+      /*
       axios.get(`${AUTH_HOST}/users/oathsignup`, {
         headers: {
           'accept': 'application/json',
@@ -75,6 +94,11 @@ export default class Login extends Component {
           console.log("HI IM HERE");
           console.log(res);
         }
+      });
+      */
+
+      this.setState ({
+        authResult: true
       });
 
   }
