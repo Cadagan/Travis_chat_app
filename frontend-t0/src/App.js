@@ -15,7 +15,7 @@ export const BACKEND_HOST = LOCAL
   : 'https://www.grupo21.ml';
 export const AUTH_HOST = LOCAL
   ? 'http://localhost:3002' 
-  : 'solo dios sabe';
+  : 'http://localhost:3002';
 
 class App extends React.Component {
   constructor(props) {

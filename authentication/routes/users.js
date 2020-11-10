@@ -4,7 +4,7 @@ const bcrypt = require ('bcrypt');
 const {client} = require("../database");
 var passport = require('passport');
 const keys = require("../oauth_keys");
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
 const jwt = require('jsonwebtoken');
 
 let user_auth = {};
@@ -26,14 +26,13 @@ passport.deserializeUser(function(user, done) {
   done(null, user);
 });
 
-passport.use(
-  new GoogleStrategy({
+passport.use(new GoogleStrategy({
       clientID: keys.google.clientID,
       clientSecret: keys.google.clientSecret,
-      callbackURL: "http://localhost:3002/users/oathsignup/callback"
+      callbackURL: "http://localhost:3000/sign-in",
+      passReqToCallback: true
   },
   function(accessToken, refreshToken, profile, done) {
-      console.log("hoola, in GoogleStrategy");
 
       const query = {
         text: 'SELECT name, username, role, googleId FROM users WHERE googleId = $1',
@@ -44,8 +43,6 @@ passport.use(
         username: null,
         role: null
       };
-
-      console.log("Starting query");
       client.query(query, async(err, queryRes) => {
         if (err) {
           return done(err);
@@ -54,22 +51,16 @@ passport.use(
           if (!queryRes.rowCount) {
             // Registrar usuario
             try {
-              const saltRounds = 10;
-              bcrypt.genSalt(saltRounds, function(err, salt) {
-                bcrypt.hash(profile.id, salt, function(err, hash) {
-                  console.log(`Inserting user ${profile.displayName}, ${hash}, ${profile.emails[0].value}, ${profile.id}`);
                   insertToDatabase(
-                    profile.displayName, profile.displayName, hash, profile.emails[0].value, profile.id
+                    profile.displayName, profile.displayName, "INVALIDHASH", profile.emails[0].value, profile.id
                   ).then(request =>{
   
-                      jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
+                      const jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
 
                       console.log("Before send user just registered information");
 
                       return done(null, {username: profile.displayName, token: jsonWebToken});
                   });
-                });
-              });
             } catch(e) {
               return done(null, false);
             }
@@ -82,13 +73,10 @@ passport.use(
               user.role = message.role;
             });
 
-            jsonWebToken = jwt.sign({name: user.name, username: user.username, role: user.role}, 'Grupo21-arquiSoft');
-
+            const jsonWebToken = jwt.sign({name: user.name, username: user.username, role: user.role}, keys.jwt);
             console.log("Before send user already registered information");
-
             return done(null, {username: user.username, token: jsonWebToken});
           }
-          
         }
     });
     }
@@ -103,32 +91,14 @@ router.get("/login/success", function(req, res) {
   }
 })
 
-router.get("/oathsignup", passport.authenticate("google", {scope: ['profile', 'email']}));
+router.get("/auth/google", passport.authenticate("google", {scope: ['profile', 'email']}));
 
 router.get(
-  '/oathsignup/callback',
-  function(req, res, next) {
-
-    // console.log('REQ:')
-    // console.log(req);
-
-    passport.authenticate('google', { 
-      // TODO : http://localhost:3000 -> Local
-      scope: ['profile', 'email'],
-      failureRedirect: 'http://localhost:3000/sign-up'}, (err, user, info) => {
-        req.session.save((err) => {
-          if (err) {
-              return next(err);
-          }
-          //req.body = data
-          const data = {sessionID: req.sessionID, username: user.username, token: user.token};
-          user_auth = data;
-          // res.status(200).send(JSON.stringify(data));
-          // return 
-          res.redirect('http://localhost:3000/sign-in');
-      });
-    })(req, res, next);
-  });
+  '/auth/google/callback',
+    passport.authenticate( 'google', {
+      successRedirect: '/auth/google/success',
+      failureRedirect: '/auth/google/failure'
+    }));
 
 async function insertToDatabase(name, username, hashedPassword, email, googleId){
   

@@ -78,25 +78,7 @@ export default class Login extends Component {
   onGoogle() {
       console.log("You clicked google");
 
-      window.open(`${AUTH_HOST}/users/oathsignup`, "_self");
-
-      /*
-      axios.get(`${AUTH_HOST}/users/oathsignup`, {
-        headers: {
-          'accept': 'application/json',
-          'Accept-Language': 'en-US,en;q=0.8',
-          'Content-Type': 'application/json',
-          // 'mode': 'no-cors'
-        },
-        withCredentials: true,
-      }).then(res => {
-        if(res.status===200) {
-          console.log("HI IM HERE");
-          console.log(res);
-        }
-      });
-      */
-
+      window.location = `${AUTH_HOST}/users/auth/google`;
       this.setState ({
         authResult: true
       });
