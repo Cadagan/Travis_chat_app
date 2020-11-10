@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS postgres.public.messages
     message text NOT NULL,
     roomid text NOT NULL,
     datetime timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    censured boolean,
+    censured boolean default false,
     originalmessage text,
     PRIMARY KEY (id)
 );
