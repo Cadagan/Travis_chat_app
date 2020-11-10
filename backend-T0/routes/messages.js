@@ -86,42 +86,45 @@ router.post('/new', function(req, res, next) {
     let roomId = req.body.roomId;
     let message = req.body.message;
     let username = req.body.username;
-
-
-    var url = process.env.endpoint_aws_comprehend;
-    var mensaje_revisar = {
-        text: message
-    }
-    fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(mensaje_revisar), // data can be `string` or {object}!
-        headers:{
-          'Content-Type': 'application/json'
+    let encryption = req.body.encrypted;
+    if(!encryption) {
+        var url = process.env.endpoint_aws_comprehend;
+        var mensaje_revisar = {
+            text: message
         }
-      })
-    .then( ( response ) => {
-        response.json().then((data) => {
-            if ( data.Sentiment === "NEGATIVE" ) {
-                // If file size is larger than expected.
-                message = "****"
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(mensaje_revisar), // data can be `string` or {object}!
+            headers: {
+                'Content-Type': 'application/json'
             }
-            insertToDatabase(roomId, message, username).then(r => {
-                if(message.includes('@')) {
-                    const space_index = message.indexOf(" ");
-                    const username_mention = message.substring(1,space_index);
-                    sendNotification(roomId, message, username_mention).then(r => console.log("Notification sent!"));
-                }
+        })
+            .then((response) => {
+                response.json().then((data) => {
+                    if (data.Sentiment === "NEGATIVE") {
+                        // If file size is larger than expected.
+                        message = "****"
+                    }
+                    insertToDatabase(roomId, message, username).then(r => {
+                        if (message.includes('@')) {
+                            const space_index = message.indexOf(" ");
+                            const username_mention = message.substring(1, space_index);
+                            sendNotification(roomId, message, username_mention).then(r => console.log("Notification sent!"));
+                        }
 
-                res.append('CurrentInstance', myIp);
-                res.status(200).send("OK");
-                emitMessageSent(message, username, roomId);
-            });
+                        res.append('CurrentInstance', myIp);
+                        res.status(200).send("OK");
+                        emitMessageSent(message, username, roomId);
+                    });
 
-        });
-    }).catch( ( error ) => {
+                });
+            }).catch((error) => {
             // If another error
             console.log(`${error}`);
-    });
+        });
+    } else {
+        emitMessageSent(message, username, roomId);
+    }
 });
 
 async function sendNotification(roomName, message, username){

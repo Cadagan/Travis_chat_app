@@ -6,6 +6,7 @@ import {BACKEND_HOST, LOCAL} from "../App";
 import axios from 'axios';
 import $ from 'jquery';
 import {onMessageRecieved, onMessageSend} from "./events/chatroomEvents";
+import {pgpKey} from "./services/PGPKey";
 
 
 export default class RoomView extends React.Component{
@@ -178,7 +179,8 @@ export default class RoomView extends React.Component{
             num = ~~num;
             message = "Random Number: "+num;
         }
-        const data = {username: this.sessionData.name, roomId: this.sessionData.roomId, message: message};
+        const data = {username: this.sessionData.name, roomId: this.sessionData.roomId, message: message, encrypted: false};
+        data.sender = pgpKey.id();
         onMessageSend(data, (cipherData, keyData)=>{
             fetch(`${BACKEND_HOST}/messages/new`,
                 {
