@@ -264,8 +264,8 @@ async function editMessage(message, id) {
 async function censureMessage(id) {
   try {
     await client.query('BEGIN');
-    const queryText = 'UPDATE messages SET censured=t WHERE id=$1';
-    const res = await client.query(queryText, [id]);
+    const queryText = 'UPDATE messages SET censured=$1 WHERE id=$2';
+    const res = await client.query(queryText, [true, id]);
     await client.query('COMMIT');
   } catch (e) {
     await client.query('ROLLBACK');

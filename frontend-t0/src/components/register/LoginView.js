@@ -43,7 +43,7 @@ export default class Login extends Component {
         cookies.set('sessionID', data.sessionID);
         cookies.set('token', data.token);
         cookies.set('username', data.username);
-        cookies.set('role', 'admin'); // TODO: Remove this after admin is working
+        cookies.set('role', data.role);
         //setUsername(data.username);
         this.props.history.push('/');
       });

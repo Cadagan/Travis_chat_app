@@ -28,7 +28,7 @@ router.get('/:roomid/latest/:count', function(req, res, next) {
     // give the query a unique name
     name: 'fetch-latest-messages',
     text:
-      'SELECT id, username,message, roomid,datetime FROM messages WHERE roomid=$1 ORDER BY datetime DESC LIMIT $2',
+      'SELECT id, username, censured, message, roomid, datetime FROM messages WHERE roomid=$1 ORDER BY datetime DESC LIMIT $2',
     values: [roomid, count],
   };
   sendMessages(query, res);
@@ -57,6 +57,7 @@ async function sendMessages(query, res) {
           date: getParsedDate(message.datetime),
           time: message_time,
           id: message.id,
+          censured: message.censured,
         });
       });
     }
@@ -73,7 +74,7 @@ router.post('/:roomid/before/:count', function(req, res, next) {
     // give the query a unique name
     name: 'fetch-before-messages',
     text:
-      'SELECT id, username,message, roomid,datetime FROM messages WHERE roomid=$1 AND id<$2 ORDER BY datetime DESC LIMIT $3',
+      'SELECT id, username, message, censured, roomid, datetime FROM messages WHERE roomid=$1 AND id<$2 ORDER BY datetime DESC LIMIT $3',
     values: [roomid, id, count],
   };
 
