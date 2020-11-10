@@ -1,13 +1,16 @@
-echo "Autoscaling Sleep 0/18"
+echo "Waiting for Autoscaling to complete 0/7"
 sleep 300
-echo "Autoscaling Sleep 3/18"
+echo "Waiting for Autoscaling to complete 1/7"
 sleep 300
-echo "Autoscaling Sleep 6/18"
+echo "Waiting for Autoscaling to complete 2/7"
 sleep 300
-echo "Autoscaling Sleep 9/18"
+echo "Waiting for Autoscaling to complete 3/7"
 sleep 300
-echo "Autoscaling Sleep 12/18"
+echo "Waiting for Autoscaling to complete 4/7"
 sleep 300
-echo "Autoscaling Sleep 15/18"
+echo "Waiting for Autoscaling to complete 5/7"
 sleep 300
-echo "Autoscaling Sleep 18/18"
+echo "Waiting for Autoscaling to complete 6/7"
+sleep 300
+echo "Waiting for Autoscaling to complete 7/7"
+sleep 300
