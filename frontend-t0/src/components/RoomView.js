@@ -93,9 +93,8 @@ export default class RoomView extends React.Component {
     componentDidMount() {
         this.socket.on("auth-message", this.authMessage);
         this.socket.on("message-added", this.messageAdded);
-        if(this.sessionData.roomId>=0){
-            userJoinChatroomEvent(this.sessionData.roomId, this.sessionData.username,this.socket, res=>{
-
+        if (this.sessionData.roomId >= 0) {
+            userJoinChatroomEvent(this.sessionData.roomId, this.sessionData.username, this.socket, res => {
             });
         }
         this.loadMessages(25);
@@ -143,22 +142,28 @@ export default class RoomView extends React.Component {
             });
     }
 
-    postMessage(event){
-        if(event!==undefined){
+    postMessage(event) {
+        if (event !== undefined) {
             event.preventDefault();
         }
         let message = this.state.message;
-        if(message==="/happy"){
+        if (message === "/happy") {
             message = ":)";
-        } else if (message==="/sad") {
+        } else if (message === "/sad") {
             message = ":("
-        } else if (message === "/random"){
-            let num = Math.random()*100;
+        } else if (message === "/random") {
+            let num = Math.random() * 100;
             num = ~~num;
-            message = "Random Number: "+num;
+            message = "Random Number: " + num;
         }
-        const data = {username: this.sessionData.name, roomId: this.sessionData.roomId, message: message, encrypted: false, sender: pgpKey.id()};
-        onMessageSend(data, (cipherData, keyData)=>{
+        const data = {
+            username: this.sessionData.name,
+            roomId: this.sessionData.roomId,
+            message: message,
+            encrypted: false,
+            sender: pgpKey.id()
+        };
+        onMessageSend(data, (cipherData, keyData) => {
             fetch(`${BACKEND_HOST}/messages/new`,
                 {
                     method: 'POST', // or 'PUT'
@@ -170,7 +175,6 @@ export default class RoomView extends React.Component {
             this.setState({message: ""});
         })
     }
-
 
     messageAdded(message) {
         console.log("A new message is arriving!", message);
@@ -216,14 +220,19 @@ export default class RoomView extends React.Component {
     this.setState({message: event.target.value});
   }
 
-    getRoomImage(){
-        fetch(`${BACKEND_HOST}/rooms/${this.sessionData.roomId}/image`)
-            .then(res => res.json())
-            .then(data =>{
-               this.setState({roomImage: data.roomImage});
-            });
-    }
 
+
+  getRoomImage() {
+    let body = {token: cookies.get('token')};
+    fetch(`${BACKEND_HOST}/rooms/${this.sessionData.roomId}/image`,{
+      body: body
+    }
+    )
+      .then(res => res.json())
+      .then(data => {
+        this.setState({roomImage: data.roomImage});
+      });
+  }
 
   render() {
     return (
