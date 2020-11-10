@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS postgres.public.messages
     message text NOT NULL,
     roomid text NOT NULL,
     datetime timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    censured boolean,
+    originalmessage text,
     PRIMARY KEY (id)
 );
 
@@ -32,12 +34,9 @@ CREATE TABLE IF NOT EXISTS postgres.public.users
     CONSTRAINT unique_username UNIQUE (username)
 );
 
-
-
 ALTER TABLE public.messages
     OWNER to postgres;
 ALTER TABLE public.rooms
 	OWNER to postgres;
 ALTER TABLE public.users
 	OWNER to postgres;
-    

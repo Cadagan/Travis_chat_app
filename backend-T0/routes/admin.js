@@ -121,6 +121,46 @@ router.post('/editGoogleid', function(req, res, next) {
     console.log(error);
   }
 });
+router.post('/deleteRoom', function(req, res, next) {
+  let roomId = req.body.roomid;
+  try {
+    console.log(`deleting room roomId: ${roomId}`);
+    deleteRoom(roomId);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post('/togglePrivate', function(req, res, next) {
+  let roomId = req.body.roomid;
+  try {
+    console.log(`Toggling private for: ${roomId}`);
+    deleteRoom(roomId);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post('/editMessage', function(req, res, next) {
+  let messageId = req.body.id;
+  let message = req.body.message;
+  try {
+    console.log(`editing message for: ${messageId}`);
+    editMessage(message, messageId);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post('/censureMessage', function(req, res, next) {
+  let messageId = req.body.id;
+  try {
+    console.log(`Censuring message for  ${messageId}`);
+    censureMessage(messageId);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 function getParsedDate(date) {
   const parsedDate = new Date(
@@ -190,6 +230,42 @@ async function editGoogleid(googleid, id) {
     await client.query('BEGIN');
     const queryText = 'UPDATE users SET googleid=$1 WHERE id=$2';
     const res = await client.query(queryText, [username, id]);
+    await client.query('COMMIT');
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  }
+}
+
+async function deleteRoom(roomId) {
+  try {
+    await client.query('BEGIN');
+    const queryText = 'DELETE FROM rooms WHERE id=$1';
+    const res = await client.query(queryText, [roomId]);
+    await client.query('COMMIT');
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  }
+}
+
+async function editMessage(message, id) {
+  try {
+    await client.query('BEGIN');
+    const queryText = 'UPDATE messages SET message=$1 WHERE id=$2';
+    const res = await client.query(queryText, [message, id]);
+    await client.query('COMMIT');
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  }
+}
+
+async function censureMessage(id) {
+  try {
+    await client.query('BEGIN');
+    const queryText = 'UPDATE messages SET censured=t WHERE id=$1';
+    const res = await client.query(queryText, [id]);
     await client.query('COMMIT');
   } catch (e) {
     await client.query('ROLLBACK');

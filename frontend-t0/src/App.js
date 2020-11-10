@@ -17,12 +17,19 @@ export const BACKEND_HOST = LOCAL
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {roomId: -1, name: ''};
+    this.state = {roomId: -1, name: '', roomPassword: ''};
     this.setCurrentRoomId = this.setCurrentRoomId.bind(this);
-    this.sessionData = {name: this.state.name, roomId: this.state.roomId};
+    this.setRoomPassword = this.setRoomPassword.bind(this);
+    this.sessionData = {
+      name: this.state.name,
+      roomId: this.state.roomId,
+      roomPassword: this.state.roomPassword,
+    };
     this.addNotification = this.addNotification.bind(this);
     this.removeSession = this.removeSession.bind(this);
-    this.setCurrentRoomIdToAdminUserView = this.setCurrentRoomIdToAdminUserView.bind(this);
+    this.setCurrentRoomIdToAdminUserView = this.setCurrentRoomIdToAdminUserView.bind(
+      this,
+    );
   }
 
   componentDidMount() {
@@ -75,6 +82,15 @@ class App extends React.Component {
     this.setState({roomId: currentRoomId});
   }
 
+  setRoomPassword(roomPassword) {
+    this.sessionData = {
+      name: this.state.name,
+      roomId: this.state.roomId,
+      roomPassword,
+    };
+    this.setState({roomPassword: roomPassword});
+  }
+
   setName(name) {
     this.setState({name: name});
   }
@@ -121,6 +137,7 @@ class App extends React.Component {
               <MenuView
                 name={this.state.name}
                 setCurrentRoomId={this.setCurrentRoomId}
+                setRoomPassword={this.setRoomPassword}
               />
             ) : this.state.roomId === -2 ? (
               <AdminUserView

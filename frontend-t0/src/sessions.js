@@ -1,7 +1,7 @@
 //import Cookies from 'universal-cookie';
 //const cookies = new Cookies();
 //const cookies = require('universal-cookie');
-let sessionData = {sessionID: null, username: null};
+let sessionData = {sessionID: null, username: null, roomPassword: null};
 console.log('Initializing sessions');
 
 function setSessionID(newId) {
