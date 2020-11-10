@@ -4,17 +4,19 @@ var router = express.Router();
 const {client} = require('../database');
 let AWS = require('aws-sdk');
 const execSync = require('child_process').execSync;
-const LOCAL = true;
+const LOCAL = false;
 const {emitAuthMessageToRoom, io} = require('../websocket');
-
 
 // const {LOCAL} = require("../bin/www");
 
+var myIp;
 if (!LOCAL) {
-  var myIp = execSync(
+  myIp = execSync(
     'curl http://169.254.169.254/latest/meta-data/public-hostname',
     {encoding: 'utf-8'},
   );
+} else {
+  myIp = '';
 }
 
 /* GET home page. */
@@ -31,6 +33,5 @@ router.post('/public_key', function(req, res, next) {
   res.append('CurrentInstance', myIp);
   res.status(200).send(object);
 });
-
 
 module.exports = router;
