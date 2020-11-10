@@ -1,10 +1,11 @@
+let kbpgp = require('kbpgp');
 export let pgpKey;
 export let userKeys = [];
-let kbpgp = require('kbpgp');
 
 export default class PgpKey {
   constructor(key) {
     this._key = key;
+    pgpKey = this;
     if (this.canDecrypt()) {
       this._ring = new kbpgp.keyring.KeyRing();
       this._ring.add_key_manager(key);

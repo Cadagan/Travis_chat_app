@@ -4,7 +4,7 @@ import {BACKEND_HOST} from "../../App";
 export function userJoinEvent(username, onDone){
     //We create a pgp key.
     PgpKey.generate(username, key => {
-        pgpKey = key;
+        //pgpKey = key;
         //onDone(userRoomId, key);
     });
 }
