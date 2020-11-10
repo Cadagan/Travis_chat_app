@@ -135,6 +135,7 @@ router.get('/:roomid/image', function(req, res, next) {
 router.post('/join', function(req, res, next) {
   let id = req.body.roomid;
   let password = req.body.password;
+  console.log(`joining with id: ${id} and password ${password}`);
   res.append('CurrentInstance', myIp);
   const query = {
     text: 'SELECT password, private FROM rooms WHERE id=$1',

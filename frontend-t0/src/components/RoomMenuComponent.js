@@ -20,9 +20,9 @@ export default class RoomMenuComponent extends React.Component {
   joinRoom() {
     let password = '';
     if (this.private) {
-      let password = prompt('Password');
+      password = prompt('Password');
     }
-    let data = {roomid: this.roomId, password: this.password};
+    let data = {roomid: this.roomId, password: password};
     fetch(`${BACKEND_HOST}/rooms/join`, {
       method: 'POST',
       body: JSON.stringify(data),
