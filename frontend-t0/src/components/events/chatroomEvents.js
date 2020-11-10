@@ -6,6 +6,10 @@ export function setPrivateRoom(value) {
     privateRoom = value;
 }
 
+export function isPrivateRoom(){
+    return privateRoom;
+}
+
 
 export function userJoinEvent(username, onDone){
     //We create a pgp key.

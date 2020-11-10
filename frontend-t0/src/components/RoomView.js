@@ -1,12 +1,14 @@
 import React, {useRef} from 'react';
 import MessageView from './MessageView';
 import {animateScroll} from 'react-scroll';
+import Cookies from 'universal-cookie';
 import io from 'socket.io-client';
 import {BACKEND_HOST, LOCAL} from '../App';
 import axios from 'axios';
 import $ from 'jquery';
-import {onMessageRecieved, onMessageSend, userJoinChatroomEvent} from "./events/chatroomEvents";
+import {isPrivateRoom, onMessageRecieved, onMessageSend, userJoinChatroomEvent} from "./events/chatroomEvents";
 import {pgpKey} from "./services/PGPKey";
+const cookies = new Cookies();
 
 
 export default class RoomView extends React.Component {
@@ -223,11 +225,7 @@ export default class RoomView extends React.Component {
 
 
   getRoomImage() {
-    let body = {token: cookies.get('token')};
-    fetch(`${BACKEND_HOST}/rooms/${this.sessionData.roomId}/image`,{
-      body: body
-    }
-    )
+    fetch(`${BACKEND_HOST}/rooms/${this.sessionData.roomId}/image`)
       .then(res => res.json())
       .then(data => {
         this.setState({roomImage: data.roomImage});
@@ -276,7 +274,7 @@ export default class RoomView extends React.Component {
                           time: message.time,
                           date: message.date,
                           username: message.username,
-                          censured: message.censured,
+                          censured: isPrivateRoom? false: message.censured,
                           id: message.id,
                         }}
                         key={i}
