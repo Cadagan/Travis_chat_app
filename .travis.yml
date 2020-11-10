@@ -22,6 +22,21 @@ script:
 after_success:
   - pip install --user awscli 
   - export PATH=$PATH:$HOME/.local/bin
+  - aws autoscaling set-desired-capacity --region=$AWS_DEFAULT_REGION --auto-scaling-group-name $AUTO_SCALING_GROUP_NAME --desired-capacity 2
+  - echo "Sleeping for 30m"
+  - echo "Autoscaling Sleep 0/30"
+  - sleep 5m
+  - echo "Autoscaling Sleep 5/30"
+  - sleep 5m
+  - echo "Autoscaling Sleep 10/30"
+  - sleep 5m
+  - echo "Autoscaling Sleep 15/30"
+  - sleep 5m
+  - echo "Autoscaling Sleep 20/30"
+  - sleep 5m
+  - echo "Autoscaling Sleep 25/30"
+  - sleep 5m
+  - echo "Autoscaling Sleep 30/30"
   - aws autoscaling set-desired-capacity --region=$AWS_DEFAULT_REGION --auto-scaling-group-name $AUTO_SCALING_GROUP_NAME --desired-capacity 1
 
 branches:
