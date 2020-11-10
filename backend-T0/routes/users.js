@@ -33,74 +33,74 @@ passport.deserializeUser(function(user, done) {
     done(null, user);
 });
 
-passport.use(
-  new GoogleStrategy({
-      clientID: keys.google.clientID,
-      clientSecret: keys.google.clientSecret,
-      callbackURL: "http://localhost:3001/users/oathsignup/callback"
-  },
-  function(accessToken, refreshToken, profile, done) {
-      console.log("hoola, in GoogleStrategy");
+//passport.use(
+  //new GoogleStrategy({
+      //clientID: keys.google.clientID,
+      //clientSecret: keys.google.clientSecret,
+      //callbackURL: "http://localhost:3001/users/oathsignup/callback"
+  //},
+  //function(accessToken, refreshToken, profile, done) {
+      //console.log("hoola, in GoogleStrategy");
 
-      const query = {
-        text: 'SELECT name, username, role, googleId FROM users WHERE googleId = $1',
-        values: [profile.id]
-      };
-      const user = {
-        name: null,
-        username: null,
-        role: null
-      };
+      //const query = {
+        //text: 'SELECT name, username, role, googleId FROM users WHERE googleId = $1',
+        //values: [profile.id]
+      //};
+      //const user = {
+        //name: null,
+        //username: null,
+        //role: null
+      //};
 
-      console.log("Starting query");
-      client.query(query, async(err, queryRes) => {
-        if (err) {
-          return done(err);
+      //console.log("Starting query");
+      //client.query(query, async(err, queryRes) => {
+        //if (err) {
+          //return done(err);
         
-        } else {
+        //} else {
 
-          console.log(queryRes);
+          //console.log(queryRes);
           
-          if (!queryRes.rowCount) {
-            // Registrar usuario
-            try {
-              const saltRounds = 10;
-              bcrypt.genSalt(saltRounds, function(err, salt) {
-                bcrypt.hash(profile.id, salt, function(err, hash) {
-                  console.log(`Inserting user ${profile.displayName}, ${hash}, ${profile.emails[0].value}, ${profile.id}`);
-                  insertToDatabase(
-                    profile.displayName, profile.displayName, hash, profile.emails[0].value, profile.id
-                  ).then(request =>{
-                      //Maybe create a token and send to user?
+          //if (!queryRes.rowCount) {
+            //// Registrar usuario
+            //try {
+              //const saltRounds = 10;
+              //bcrypt.genSalt(saltRounds, function(err, salt) {
+                //bcrypt.hash(profile.id, salt, function(err, hash) {
+                  //console.log(`Inserting user ${profile.displayName}, ${hash}, ${profile.emails[0].value}, ${profile.id}`);
+                  //insertToDatabase(
+                    //profile.displayName, profile.displayName, hash, profile.emails[0].value, profile.id
+                  //).then(request =>{
+                      ////Maybe create a token and send to user?
   
-                      jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
+                      //jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
   
-                      return done(null, {username: profile.displayName, token: jsonWebToken});
-                  });
-                });
-              });
-            } catch(e) {
-              return done(null, false);
-            }
+                      //return done(null, {username: profile.displayName, token: jsonWebToken});
+                  //});
+                //});
+              //});
+            //} catch(e) {
+              //return done(null, false);
+            //}
 
-          } else {
-             // Usuario registrado
-            queryRes.rows.forEach(message=>{
-              user.name = message.name;
-              user.username = message.username;
-              user.role = message.role;
-            });
+          //} else {
+             //// Usuario registrado
+            //queryRes.rows.forEach(message=>{
+              //user.name = message.name;
+              //user.username = message.username;
+              //user.role = message.role;
+            //});
 
-            jsonWebToken = jwt.sign({name: user.name, username: user.username, role: user.role}, 'Grupo21-arquiSoft');
+            //jsonWebToken = jwt.sign({name: user.name, username: user.username, role: user.role}, 'Grupo21-arquiSoft');
 
-            return done(null, {username: user.username, token: jsonWebToken});
-          }
+            //return done(null, {username: user.username, token: jsonWebToken});
+          //}
           
-        }
-    });
-    }
-  )
-);
+        //}
+    //});
+    //}
+  //)
+//);
 
 
 passport.use(new LocalStrategy(
