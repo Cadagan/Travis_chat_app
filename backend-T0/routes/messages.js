@@ -8,15 +8,20 @@ const {emitMessageSent, emitEncryptedMessage} = require('../websocket');
 let AWS = require('aws-sdk');
 const fetch = require('node-fetch');
 const execSync = require('child_process').execSync;
-const LOCAL = true;
+const LOCAL = false;
 
 // const {LOCAL} = require("../bin/www");
 
+var myIp;
+
 if (!LOCAL) {
-  var myIp = execSync(
+  myIp = execSync(
     'curl http://169.254.169.254/latest/meta-data/public-hostname',
     {encoding: 'utf-8'},
   );
+}
+else {
+  myIp = '';
 }
 
 /* GET home page. */

@@ -12,13 +12,16 @@ var secretAccessKey = process.env.secretAccessKey;
 var bucket_used = process.env.s3_bucket;
 const execSync = require('child_process').execSync;
 
-const LOCAL = true;
+const LOCAL = false;
 
+var myIp;
 if (!LOCAL) {
-  var myIp = execSync(
+  myIp = execSync(
     'curl http://169.254.169.254/latest/meta-data/public-hostname',
     {encoding: 'utf-8'},
   );
+} else {
+  myIp = '';
 }
 
 const {client} = require('../database');

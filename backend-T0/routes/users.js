@@ -1,94 +1,96 @@
 var express = require('express');
 var router = express.Router();
-const bcrypt = require ('bcrypt');
-const {client} = require("../database");
-var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
+const {client} = require('../database');
+var passport = require('passport'),
+  LocalStrategy = require('passport-local').Strategy;
 const execSync = require('child_process').execSync;
 const jwt = require('jsonwebtoken');
 
-const LOCAL = true;
+const LOCAL = false;
 
-const keys = require("../oauth_keys");
-const { google } = require('../oauth_keys');
+const keys = require('../oauth_keys');
+const {google} = require('../oauth_keys');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 if (!LOCAL) {
   var myIp = execSync(
-      'curl http://169.254.169.254/latest/meta-data/public-hostname',
-      { encoding: 'utf-8' }
-    );
+    'curl http://169.254.169.254/latest/meta-data/public-hostname',
+    {encoding: 'utf-8'},
+  );
+} else {
+  myIp = '';
 }
 
-async function validPassword(password, hash){
+async function validPassword(password, hash) {
   return bcrypt.compare(password, hash);
 }
 
 passport.serializeUser(function(user, done) {
-    done(null, user);
+  done(null, user);
 });
 
 passport.deserializeUser(function(user, done) {
-    done(null, user);
+  done(null, user);
 });
 
 //passport.use(
-  //new GoogleStrategy({
-      //clientID: keys.google.clientID,
-      //clientSecret: keys.google.clientSecret,
-      //callbackURL: "http://localhost:3001/users/oathsignup/callback"
-  //},
-  //function(accessToken, refreshToken, profile, done) {
-      //console.log("hoola, in GoogleStrategy");
+//new GoogleStrategy({
+//clientID: keys.google.clientID,
+//clientSecret: keys.google.clientSecret,
+//callbackURL: "http://localhost:3001/users/oathsignup/callback"
+//},
+//function(accessToken, refreshToken, profile, done) {
+//console.log("hoola, in GoogleStrategy");
 
-      //const query = {
-        //text: 'SELECT name, username, role, googleId FROM users WHERE googleId = $1',
-        //values: [profile.id]
-      //};
-      //const user = {
-        //name: null,
-        //username: null,
-        //role: null
-      //};
+//const query = {
+//text: 'SELECT name, username, role, googleId FROM users WHERE googleId = $1',
+//values: [profile.id]
+//};
+//const user = {
+//name: null,
+//username: null,
+//role: null
+//};
 
-      //client.query(query, async(err, queryRes) => {
-        //if (err) {
-          //// Crear usuario
-          //try {
-            //const saltRounds = 10;
-            //bcrypt.genSalt(saltRounds, function(err, salt) {
-              //bcrypt.hash(profile.id, salt, function(err, hash) {
-                //insertToDatabase(
-                  //profile.displayName, profile.displayName, hash, profile.emails[0].value, profile.id
-                //).then(request =>{
-                    ////Maybe create a token and send to user?
+//client.query(query, async(err, queryRes) => {
+//if (err) {
+//// Crear usuario
+//try {
+//const saltRounds = 10;
+//bcrypt.genSalt(saltRounds, function(err, salt) {
+//bcrypt.hash(profile.id, salt, function(err, hash) {
+//insertToDatabase(
+//profile.displayName, profile.displayName, hash, profile.emails[0].value, profile.id
+//).then(request =>{
+////Maybe create a token and send to user?
 
-                    //jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
+//jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
 
-                    //return done(null, {username: profile.displayName, token: jsonWebToken});
-                //});
-              //});
-            //});
-          //}
-          //catch(e) {
-            //return done(e);
-          //}
+//return done(null, {username: profile.displayName, token: jsonWebToken});
+//});
+//});
+//});
+//}
+//catch(e) {
+//return done(e);
+//}
 
-        //} else {
-          //// Entregar usuario loggeado
-          //queryRes.rows.forEach(message=>{
-            //user.name = message.name;
-            //user.username = message.username;
-            //user.role = message.role;
-          //});
+//} else {
+//// Entregar usuario loggeado
+//queryRes.rows.forEach(message=>{
+//user.name = message.name;
+//user.username = message.username;
+//user.role = message.role;
+//});
 
-            //jsonWebToken = jwt.sign({name: user.name, username: user.username, role: user.role}, 'Grupo21-arquiSoft');
+//jsonWebToken = jwt.sign({name: user.name, username: user.username, role: user.role}, 'Grupo21-arquiSoft');
 
-            //return done(null, {username: user.username, token: jsonWebToken});
-        //}
-    //});
-    //}
-  //)
+//return done(null, {username: user.username, token: jsonWebToken});
+//}
+//});
+//}
+//)
 //);
 //new GoogleStrategy({
 //clientID: keys.google.clientID,
@@ -190,7 +192,7 @@ passport.use(
 
 router.post('/signup', function(req, res, next) {
   console.log(req.body);
-  // res.append('CurrentInstance', myIp);
+   res.append('CurrentInstance', myIp);
   const saltRounds = 10;
   try {
     bcrypt.genSalt(saltRounds, function(err, salt) {
@@ -219,7 +221,7 @@ router.post(
     failureFlash: true,
   }),
   (req, res, next) => {
-    // res.append('CurrentInstance', myIp);
+     res.append('CurrentInstance', myIp);
 
     req.session.save(err => {
       if (err) {
@@ -269,14 +271,14 @@ router.get(
 );
 
 router.post('/logout', function(req, res, next) {
-  // res.append('CurrentInstance', myIp);
+   res.append('CurrentInstance', myIp);
   req.logout();
   req.session.destroy();
   res.status(200).send('OK');
 });
 
 router.get('/username', function(req, res, next) {
-  // res.append('CurrentInstance', myIp);
+   res.append('CurrentInstance', myIp);
   console.log(req.user);
   if (!req.user) {
     console.log('User not logged in');
