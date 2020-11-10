@@ -171,12 +171,16 @@ router.post(
         return next(err);
       }
 
-      const data = {
-        sessionID: req.sessionID,
-        username: req.user.username,
-        token: req.user.token,
-      };
-      res.status(200).send(JSON.stringify(data));
+      getUserRole(req.user.username).then(role => {
+        const data = {
+          sessionID: req.sessionID,
+          username: req.user.username,
+          token: req.user.token,
+          role: role,
+        };
+        console.log(`The role sent with signin is: ${role}`);
+        res.status(200).send(JSON.stringify(data));
+      });
     });
   },
 );
@@ -266,6 +270,28 @@ async function insertToDatabase(
     await client.query('ROLLBACK');
     throw e;
   }
+}
+
+async function getUserRole(username) {
+  console.log(`Getting user role of username: ${username}`);
+  const query = {
+    text: 'SELECT role FROM users WHERE username=$1',
+    values: [username],
+  };
+  return client.query(query).then((queryRes, err) => {
+    if (err) {
+      console.log('Error getting username from database');
+      return null;
+    } else {
+      if (queryRes.rows[0]) {
+        console.log(`Found role: ${queryRes.rows[0].role}`);
+        return queryRes.rows[0].role;
+      } else {
+        console.log('No username found with that name');
+        return null;
+      }
+    }
+  });
 }
 
 module.exports = router;

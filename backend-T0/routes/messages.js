@@ -55,7 +55,7 @@ async function sendMessages(query, res) {
           date: getParsedDate(message.datetime),
           time: message_time,
           id: message.id,
-          censured: message.censured
+          censured: message.censured,
         });
       });
     }
