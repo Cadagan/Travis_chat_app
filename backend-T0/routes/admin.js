@@ -71,6 +71,57 @@ router.post('/users/before/:count', function(req, res, next) {
   sendUsers(query, res);
 });
 
+router.post('/editUsername', function(req, res, next) {
+  let username = req.body.username;
+  let id = req.body.id;
+  try {
+    console.log(`editing username, username: ${username}, id: ${id}`);
+    setUsername(username, id);
+  } catch (error) {
+    console.log(error);
+  }
+});
+router.post('/editName', function(req, res, next) {
+  let name = req.body.name;
+  let id = req.body.id;
+  try {
+    console.log(`editing name, name: ${name}, id: ${id}`);
+    editName(name, id);
+  } catch (error) {
+    console.log(error);
+  }
+});
+router.post('/editEmail', function(req, res, next) {
+  let email = req.body.email;
+  let id = req.body.id;
+  try {
+    console.log(`editing email, email: ${email}, id: ${id}`);
+    editEmail(email, id);
+  } catch (error) {
+    console.log(error);
+  }
+});
+router.post('/editRole', function(req, res, next) {
+  let role = req.body.role;
+  let id = req.body.id;
+  try {
+    console.log(`editing role, role: ${role}, id: ${id}`);
+    editRole(role, id);
+  } catch (error) {
+    console.log(error);
+  }
+});
+router.post('/editGoogleid', function(req, res, next) {
+  let googleid = req.body.googleid;
+  let id = req.body.id;
+  try {
+    console.log(`editing googleid, googleid: ${googleid}, id: ${id}`);
+    editGoogleid(googleid, id);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 function getParsedDate(date) {
   const parsedDate = new Date(
     date.getFullYear(),
@@ -90,25 +141,60 @@ function getParsedDate(date) {
       1}-${parsedDate.getDate()}`;
 }
 
-async function sendNotification(roomName, user, username) {
-  const query = {
-    // give the query a unique name
-    name: 'get-user-email',
-    text: 'SELECT email FROM users WHERE username=$1',
-    values: [username],
-  };
-  client.query(query, (err, queryRes) => {
-    if (err) {
-      console.log('Error while getting user from the databaes');
-    } else {
-      if (queryRes.rows.length > 0) {
-        const email = queryRes.rows[0].email;
-        console.log('Se le está enviando un correo a: ' + email);
-      } else {
-        console.log('No se encontró un usuario con username: ' + username);
-      }
-    }
-  });
+async function setUsername(username, id) {
+  try {
+    await client.query('BEGIN');
+    const queryText = 'UPDATE users SET username=$1 WHERE id=$2';
+    const res = await client.query(queryText, [username, id]);
+    await client.query('COMMIT');
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  }
+}
+async function editName(name, id) {
+  try {
+    await client.query('BEGIN');
+    const queryText = 'UPDATE users SET name=$1 WHERE id=$2';
+    const res = await client.query(queryText, [name, id]);
+    await client.query('COMMIT');
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  }
+}
+async function editEmail(email, id) {
+  try {
+    await client.query('BEGIN');
+    const queryText = 'UPDATE users SET email=$1 WHERE id=$2';
+    const res = await client.query(queryText, [email, id]);
+    await client.query('COMMIT');
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  }
+}
+async function editRole(role, id) {
+  try {
+    await client.query('BEGIN');
+    const queryText = 'UPDATE users SET role=$1 WHERE id=$2';
+    const res = await client.query(queryText, [role, id]);
+    await client.query('COMMIT');
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  }
+}
+async function editGoogleid(googleid, id) {
+  try {
+    await client.query('BEGIN');
+    const queryText = 'UPDATE users SET googleid=$1 WHERE id=$2';
+    const res = await client.query(queryText, [username, id]);
+    await client.query('COMMIT');
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  }
 }
 
 module.exports = router;
