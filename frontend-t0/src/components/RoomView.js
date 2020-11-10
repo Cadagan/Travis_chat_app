@@ -95,7 +95,6 @@ export default class RoomView extends React.Component {
         this.socket.on("message-added", this.messageAdded);
         if (this.sessionData.roomId >= 0) {
             userJoinChatroomEvent(this.sessionData.roomId, this.sessionData.username, this.socket, res => {
-
             });
         }
         this.loadMessages(25);
@@ -172,10 +171,11 @@ export default class RoomView extends React.Component {
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                }).then(res => console.log("Sent message!"));
+                }).then(res=>console.log("Sent message!"));
             this.setState({message: ""});
         })
     }
+
     messageAdded(message) {
         console.log("A new message is arriving!", message);
         if(message.roomId === this.sessionData.roomId){
@@ -194,12 +194,8 @@ export default class RoomView extends React.Component {
             setTimeout(()=>this.forceUpdate(),100);
         }
     }
-
-
-
   getNextMessages(amount) {
-    let latest = this.state.messages[0];
-    latest.token = cookies.get('token');
+    const latest = this.state.messages[0];
     fetch(
       `${BACKEND_HOST}/messages/${this.sessionData.roomId}/before/${amount}`,
       {
@@ -223,6 +219,8 @@ export default class RoomView extends React.Component {
   handleChange(event) {
     this.setState({message: event.target.value});
   }
+
+
 
   getRoomImage() {
     let body = {token: cookies.get('token')};

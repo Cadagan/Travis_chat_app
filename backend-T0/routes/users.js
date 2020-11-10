@@ -165,7 +165,6 @@ router.get('/username', function(req, res, next) {
 });
 
 async function insertToDatabase(name, username, hashedPassword, email){
-  
   console.log(`Inserting new user: '${username}'`);
   try {
     await client.query('BEGIN');
