@@ -10,6 +10,7 @@ var messagesRouter = require('./routes/messages');
 var usersRouter = require('./routes/users');
 var roomsRouter = require('./routes/rooms');
 var encryptionRouter = require('./routes/encryption');
+var adminRouter = require('./routes/admin');
 
 var app = express();
 app.use(
@@ -47,5 +48,6 @@ app.use('/messages', messagesRouter);
 app.use('/rooms', roomsRouter);
 app.use('/users', usersRouter);
 app.use('/encryption', encryptionRouter);
+app.use('/admin', adminRouter);
 
 module.exports = app;

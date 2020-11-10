@@ -1,12 +1,12 @@
 GRANT ALL PRIVILEGES ON DATABASE postgres TO postgres;
 CREATE TABLE IF NOT EXISTS postgres.public.rooms
 (
-    id serial,
-    name text NOT NULL,
-    room_image text,
+	id serial,
+	name text NOT NULL,
+	room_image text,
     private boolean,
     password varchar(50),
-    PRIMARY KEY (id)
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS postgres.public.messages
