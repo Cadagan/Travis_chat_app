@@ -20,11 +20,9 @@ script:
   - docker-compose down
     
 after_success:
-  - echo "------ Building Section ------"
   - pip install --user awscli 
   - export PATH=$PATH:$HOME/.local/bin
-  - aws configure
-  - aws autoscaling set-desired-capacity --auto-scaling-group-name Entrega1ASC --desired- capacity 1 --honor-cooldown
+  - aws autoscaling set-desired-capacity --region="$AWS_DEFAULT_REGION" --auto-scaling-group-name "$AUTO_SCALING_GROUP_NAME" --desired-capacity 2
 
 branches:
   only:
