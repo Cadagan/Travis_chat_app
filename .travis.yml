@@ -19,9 +19,14 @@ script:
   - docker-compose up -d
   - docker-compose down
     
+after_success:
+  - echo "------ Building Section ------"
+  - pip install --user awscli 
+  - export PATH=$PATH:$HOME/.local/bin
+  - aws configure
+  - aws autoscaling set-desired-capacity --auto-scaling-group-name Entrega1ASC --desired- capacity 1 --honor-cooldown
 
 branches:
   only:
-    - master
     - main
-    - travis_ci_cd
+    - deployment
