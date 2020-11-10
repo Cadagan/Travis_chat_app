@@ -22,7 +22,7 @@ script:
 after_success:
   - pip install --user awscli 
   - export PATH=$PATH:$HOME/.local/bin
-  - aws autoscaling set-desired-capacity --region="$AWS_DEFAULT_REGION" --auto-scaling-group-name "$AUTO_SCALING_GROUP_NAME" --desired-capacity 2
+  - aws autoscaling set-desired-capacity --region="$AWS_DEFAULT_REGION" --auto-scaling-group-name "$AUTO_SCALING_GROUP_NAME" --desired-capacity 1
 
 branches:
   only:
