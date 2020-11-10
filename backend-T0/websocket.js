@@ -3,7 +3,7 @@ var redis = require('socket.io-redis');
 
 function initialize(server, LOCAL) {
     if (LOCAL) {
-        io = require('socket.io').listen(server, {
+        io = require('socket.io')(server, {
             path: '/backend',
             handlePreflightRequest: (req, res) => {
                 const headers = {
@@ -16,7 +16,7 @@ function initialize(server, LOCAL) {
             }
         });
     } else {
-        io = require('socket.io').listen(5000, {
+        io = require('socket.io')(5000, {
             path: '/backend',
             handlePreflightRequest: (req, res) => {
                 const headers = {
@@ -38,13 +38,12 @@ function initialize(server, LOCAL) {
     });
     var backend_socket = io.of('/backend');
     backend_socket.on('connect', (socket) => {
-        socket.join(socket.handshake.query[roomId]);
-        socket.room = socket.handshake.query[roomId];
+        socket.join(socket.handshake.query[socket.roomId]);
+        socket.room = socket.handshake.query[socket.roomId];
     });
-  backend_socket.to(roomId).emit('message-added', function(socket){
+  backend_socket.on('message-added', function(socket){
     socket.on('message-added', function(message){
       socket.join(message);
-
       //log other socket.io-id's in the message
       backend_socket.adapter.clients([message], (err, clients) => {
         console.log(clients);
@@ -93,5 +92,6 @@ function emitMessageSent(message, username, roomId) {
 
 module.exports = {
     emitMessageSent,
+    emitAuthMessageToRoom,
     initialize
 };

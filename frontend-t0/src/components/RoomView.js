@@ -20,6 +20,7 @@ export default class RoomView extends React.Component{
         this.handleChange = this.handleChange.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
         this.messageAdded = this.messageAdded.bind(this);
+        this.authMessage = this.authMessage.bind(this);
         this.getNextMessages = this.getNextMessages.bind(this);
         this.postMessage = this.postMessage.bind(this);
         if(LOCAL){
@@ -92,8 +93,18 @@ export default class RoomView extends React.Component{
         this.loadMessages(25);
         this.getRoomImage();
         this.socket.on("message-added", this.messageAdded);
+        this.socket.on("auth-message", this.authMessage);
         setTimeout(this.scrollToBottom, 50);
     }
+
+    authMessage(message){
+        onMessageRecieved(message, publicKey=>{
+            io.emit('auth-message-response', {
+                message: {publicKey:publicKey, username: this.sessionData.name}
+            });
+        });
+    }
+
 
     scrollToBottom = () => {
         if(this.mesRef.current!==null) {

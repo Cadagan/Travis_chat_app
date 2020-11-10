@@ -30,8 +30,8 @@ class App extends React.Component {
 
   componentDidMount() {
     const sessionID = cookies.get('sessionID');
-    console.log(sessionID);
-    if (sessionID == 'null') {
+    console.log("Session id:",sessionID);
+    if (!sessionID || sessionID==='undefined' || sessionID==='null') {
       this.props.history.push('/sign-up');
     } else {
       console.log(`getting username, sessionID: ${sessionID}`);
@@ -41,6 +41,7 @@ class App extends React.Component {
       });
     }
   }
+
 
   getUsername() {
     /*fetch(`${BACKEND_HOST}/users/username`)
@@ -76,12 +77,14 @@ class App extends React.Component {
         }
     }*/
 
-  setCurrentRoomId(currentRoomId) {
+  setCurrentRoomId(currentRoomId, socket) {
     this.sessionData = {name: this.state.name, roomId: currentRoomId};
     this.setState({roomId: currentRoomId});
-    userJoinChatroomEvent(currentRoomId, this.sessionData.name, res=>{
+    if(currentRoomId>=0) {
+      userJoinChatroomEvent(currentRoomId, this.sessionData.name, socket, res => {
 
-    });
+      });
+    }
   }
 
   setName(name) {

@@ -4,16 +4,21 @@ import {BACKEND_HOST} from "../../App";
 export function userJoinEvent(username, onDone){
     //We create a pgp key.
     PgpKey.generate(username, key => {
-        pgpKey = key;
+        console.log();
+        //pgpKey = key;
         onDone(key);
     });
 }
-export function userJoinChatroomEvent(room, user, onDone){
+export function userJoinChatroomEvent(room, user, socket, onDone){
     //We send our public key to everyone else, and recieve every other participants public key. TODO backend side.
-    const public_key = {publicKey: pgpKey.public(), username: user};
-    fetch(`${BACKEND_HOST}/encryption/public_key`, {
-        method: "POST",
-        headers: "application/json",
+    const public_key = {publicKey: pgpKey.public(), username: user, roomId: room};
+    fetch(`${BACKEND_HOST}/encryption/public_key`,
+        {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(public_key), // data can be `string` or {object}!
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
         .then(res=>res.json())
         .then(data=>{
@@ -23,6 +28,10 @@ export function userJoinChatroomEvent(room, user, onDone){
                 });
             });
         });
+
+    io.on('auth-message-response', res=>{
+        console.log(res);
+    });
 }
 
 export function userLeaveChatroom(user){
@@ -38,6 +47,7 @@ export function onMessageRecieved(message, onDone){
         });
         //We send ours to whoever sent us their public key. TODO DO THIS
         const publicKey = pgpKey.public();
+        onDone(publicKey);
     } else {
         if (pgpKey.canDecrypt()) {
             //We just decrypt with our private key.

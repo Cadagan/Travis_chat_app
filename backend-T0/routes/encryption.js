@@ -2,11 +2,11 @@ require('dotenv').config();
 var express = require('express');
 var router = express.Router();
 const {client} = require('../database');
-//const {emitMessageSent} = require('../websocket');
 let AWS = require('aws-sdk');
-const fetch = require('node-fetch');
 const execSync = require('child_process').execSync;
 const LOCAL = true;
+const {emitAuthMessageToRoom, io} = require('../websocket');
+
 
 // const {LOCAL} = require("../bin/www");
 
@@ -18,14 +18,22 @@ if (!LOCAL) {
 }
 
 /* GET home page. */
-
 router.post('/public_key', function(req, res, next) {
   let object = {};
-  let count = req.params.count;
-  let roomid = req.params.roomid;
-  let id = req.body.id;
+  let publicKey = req.body.publicKey;
+  let username = req.body.username;
+  let roomId = req.body.roomId;
+
+  console.log(`Public Key arrived from ${username}: ${publicKey}`);
+  const message = {publicKey: publicKey, username: username};
+  emitAuthMessageToRoom(message, roomId);
+  io.on('auth-message-response', res=>{
+    console.log(res);
+  });
+  //TODO Await their response?
   res.append('CurrentInstance', myIp);
   res.status(200).send(object);
 });
+
 
 module.exports = router;
