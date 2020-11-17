@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import {BACKEND_HOST} from '../../App';
 import {AUTH_HOST} from '../../App';
-import {setUsername} from '../../sessions';
-import {Switch} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 const cookies = new Cookies();
@@ -38,7 +35,7 @@ export default class Login extends Component {
         e.preventDefault();
         const data = {username: this.state.username, password: this.state.password};
 
-        fetch(`${BACKEND_HOST}/users/signin`, {
+        fetch(`${AUTH_HOST}/users/signin`, {
             method: 'POST', // or 'PUT'
             body: JSON.stringify(data), // data can be `string` or {object}!
             //credentials: 'include',
@@ -72,7 +69,7 @@ export default class Login extends Component {
 
 
     onGoogle() {
-        window.open('http://localhost:3001/users/oathsignup', '_self');
+        window.open(`${AUTH_HOST}/users/oathsignup`, '_self');
         console.log("You clicked google");
 
         window.location = `${AUTH_HOST}/users/auth/google`;

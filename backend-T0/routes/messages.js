@@ -8,13 +8,12 @@ const {emitMessageSent, emitEncryptedMessage} = require('../websocket');
 let AWS = require('aws-sdk');
 const fetch = require('node-fetch');
 const execSync = require('child_process').execSync;
-const LOCAL = false;
-
-// const {LOCAL} = require("../bin/www");
+const {LOCAL} = require("../bin/www");
 
 var myIp;
 
 if (!LOCAL) {
+    console.log("Local inside here is: ", LOCAL);
   myIp = execSync(
     'curl http://169.254.169.254/latest/meta-data/public-hostname',
     {encoding: 'utf-8'},
