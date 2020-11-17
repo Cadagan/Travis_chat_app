@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 const LOCAL = true;
-
-
+module.exports = {LOCAL};
 /**
  * Module dependencies.
  */
@@ -108,6 +107,5 @@ function normalizePort(val) {
 
   return false;
 }
-module.exports = {server};
-
-exports.LOCAL = LOCAL;
+module.exports = {LOCAL,
+                  server};

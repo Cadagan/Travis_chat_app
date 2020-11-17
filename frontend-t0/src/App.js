@@ -11,7 +11,11 @@ import {userJoinChatroomEvent, userJoinEvent} from "./components/events/chatroom
 
 const cookies = new Cookies();
 
+<<<<<<< HEAD
 export const LOCAL = false;
+=======
+export const LOCAL = true;
+>>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 export const BACKEND_HOST = LOCAL
   ? 'http://localhost:3001'
   : 'https://www.grupo21.ml';
@@ -51,8 +55,13 @@ class App extends React.Component {
       });
     }
   }
+<<<<<<< HEAD
 
 
+=======
+
+
+>>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
   getUsername() {
     /*fetch(`${BACKEND_HOST}/users/username`)
             .then(res => res.json())
@@ -61,12 +70,21 @@ class App extends React.Component {
             });*/
     this.setState({name: cookies.get('username')});
   }
+<<<<<<< HEAD
 
   setCurrentRoomIdToAdminUserView() {
     this.sessionData = {name: this.state.name, roomId: -2};
     this.setState({roomId: -2});
   }
 
+=======
+
+  setCurrentRoomIdToAdminUserView() {
+    this.sessionData = {name: this.state.name, roomId: -2};
+    this.setState({roomId: -2});
+  }
+
+>>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
   /* changeName() {
         let name = "";
         name = prompt("Please enter your name:", "");

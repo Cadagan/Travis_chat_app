@@ -6,8 +6,13 @@ var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 const execSync = require('child_process').execSync;
 const jwt = require('jsonwebtoken');
+<<<<<<< HEAD
 
 const LOCAL = true;
+=======
+const {LOCAL} = require("../bin/www");
+
+>>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 if (!LOCAL) {
   var myIp = execSync(
@@ -16,6 +21,7 @@ if (!LOCAL) {
     );
 }
 
+<<<<<<< HEAD
 async function validPassword(password, hash){
   return bcrypt.compare(password, hash);
 }
@@ -146,6 +152,8 @@ router.get(
   },
 );
 
+=======
+>>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 router.post('/logout', function(req, res, next) {
   // res.append('CurrentInstance', myIp);
   req.logout();
@@ -164,6 +172,7 @@ router.get('/username', function(req, res, next) {
   }
 });
 
+<<<<<<< HEAD
 async function insertToDatabase(name, username, hashedPassword, email){
   console.log(`Inserting new user: '${username}'`);
   try {
@@ -203,4 +212,6 @@ async function getUserRole(username) {
   });
 }
 
+=======
+>>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 module.exports = router;
