@@ -29,10 +29,12 @@ passport.deserializeUser(function(user, done) {
 passport.use(new GoogleStrategy({
       clientID: keys.google.clientID,
       clientSecret: keys.google.clientSecret,
-      callbackURL: "http://localhost:3000/sign-in",
-      passReqToCallback: true
+      callbackURL: "http://localhost:3002/users/auth/google/callback",
+      //passReqToCallback: true
   },
   function(accessToken, refreshToken, profile, done) {
+
+      console.log("running google strategy");
 
       const query = {
         text: 'SELECT name, username, role, googleId FROM users WHERE googleId = $1',
@@ -51,6 +53,7 @@ passport.use(new GoogleStrategy({
           if (!queryRes.rowCount) {
             // Registrar usuario
             try {
+                  console.log("Inserting into database google user");
                   insertToDatabase(
                     profile.displayName, profile.displayName, "INVALIDHASH", profile.emails[0].value, profile.id
                   ).then(request =>{
@@ -79,8 +82,7 @@ passport.use(new GoogleStrategy({
           }
         }
     });
-    }
-  )
+    })
 );
 
 router.get("/login/success", function(req, res) {
@@ -92,13 +94,46 @@ router.get("/login/success", function(req, res) {
 })
 
 router.get("/auth/google", passport.authenticate("google", {scope: ['profile', 'email']}));
-
+/*
 router.get(
   '/auth/google/callback',
-    passport.authenticate( 'google', {
-      successRedirect: '/auth/google/success',
-      failureRedirect: '/auth/google/failure'
-    }));
+  function(req, res, next) {
+    passport.authenticate('google', { 
+      scope: ['profile', 'email'],
+      successRedirect: 'http://localhost:3000/',
+      failureRedirect: 'http://localhost:3000/sign-up'},
+      (err, user, info) => {
+        console.log(req);
+        req.session.save((err) => {
+          if (err) {
+              return next(err);
+          }
+          console.log("REQ.USER:")
+          console.log(req.user);
+          //req.body = data
+          const data = {sessionID: req.sessionID, username: user.username, token: user.token};
+          user_auth = data;
+          res.status(200).send(JSON.stringify(data));
+          // return 
+          // res.redirect('http://localhost:3000/sign-in');
+    });
+  })(req, res, next);
+});
+*/
+router.get(
+  '/auth/google/callback',
+    passport.authenticate('google', { 
+      scope: ['profile', 'email'],
+      //bsuccessRedirect: 'http://localhost:3000/sign-in',
+      failureRedirect: 'http://localhost:3000/sign-up',
+      session: false}),
+      (req, res) => {
+        console.log("req:")
+        console.log(req);
+        console.log("res:")
+        console.log(res);
+      }
+  );
 
 async function insertToDatabase(name, username, hashedPassword, email, googleId){
   

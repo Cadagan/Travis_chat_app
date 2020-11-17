@@ -4,7 +4,7 @@ var router = express.Router();
 const {client} = require('../database');
 let AWS = require('aws-sdk');
 const execSync = require('child_process').execSync;
-const LOCAL = false;
+const LOCAL = true;
 const {emitAuthMessageToRoom, io} = require('../websocket');
 
 // const {LOCAL} = require("../bin/www");

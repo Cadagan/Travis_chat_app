@@ -9,12 +9,17 @@ const jwt = require('jsonwebtoken');
 
 const LOCAL = true;
 
+var myIp;
+
 if (!LOCAL) {
-  var myIp = execSync(
+  myIp = execSync(
       'curl http://169.254.169.254/latest/meta-data/public-hostname',
       { encoding: 'utf-8' }
     );
+} else {
+  myIp = '';
 }
+
 
 async function validPassword(password, hash){
   return bcrypt.compare(password, hash);

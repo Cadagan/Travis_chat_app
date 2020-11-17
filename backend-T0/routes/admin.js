@@ -6,7 +6,7 @@ const {client} = require('../database');
 let AWS = require('aws-sdk');
 const fetch = require('node-fetch');
 const execSync = require('child_process').execSync;
-const LOCAL = false;
+const LOCAL = true;
 
 // const {LOCAL} = require("../bin/www");
 

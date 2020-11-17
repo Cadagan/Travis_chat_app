@@ -12,7 +12,7 @@ var secretAccessKey = process.env.secretAccessKey;
 var bucket_used = process.env.s3_bucket;
 const execSync = require('child_process').execSync;
 
-const LOCAL = false;
+const LOCAL = true;
 
 var myIp;
 if (!LOCAL) {
