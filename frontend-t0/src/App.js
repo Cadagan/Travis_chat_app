@@ -11,7 +11,7 @@ import {userJoinChatroomEvent, userJoinEvent} from "./components/events/chatroom
 
 const cookies = new Cookies();
 
-export const LOCAL = false;
+export const LOCAL = true;
 export const BACKEND_HOST = LOCAL
   ? 'http://localhost:3001'
   : 'https://www.grupo21.ml';

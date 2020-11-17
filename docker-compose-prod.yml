@@ -54,6 +54,47 @@ services:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+  
+    tty: true
+    environment:
+      BACKEND_HOST: backend
+    build:
+        context: ./frontend-t0
+        dockerfile: Dockerfile
+    container_name: chatroom-frontend
+    restart: always
+    links:
+      - "backend:localhost"
+    ports:
+      - 3000:3000
+      - 3002:3002
+    volumes:
+      - ./front:/front
+      - /front/node_modules
+  authentication:
+    container_name: auth-container
+    build: ./authentication
+    ports:
+      - 3002:3002
+    environment:
+      - DATABASE_PORT=5432
+      - DATABASE_HOST=database
+      - DATABASE_DBNAME=postgres
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=root
+
+    volumes:
+      - .:/code
+    links:
+      - "postgres:database"
+    depends_on:
+      - postgres
+    restart: always
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npm run start --prefix authentication
 
 volumes:
   my_dbdata:

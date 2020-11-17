@@ -5,14 +5,13 @@ const aws = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const multer = require('multer');
 const path = require('path');
+const {LOCAL} = require("../bin/www");
 var router = express.Router();
 
 var accessKeyId = process.env.accessKeyId;
 var secretAccessKey = process.env.secretAccessKey;
 var bucket_used = process.env.s3_bucket;
 const execSync = require('child_process').execSync;
-
-const LOCAL = false;
 
 var myIp;
 if (!LOCAL) {
