@@ -16,6 +16,7 @@ export default class Login extends Component {
         this.onChange = this.onChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.onGoogle = this.onGoogle.bind(this);
+        this.responseGoogle = this.responseGoogle.bind(this);
     }
 
     responseGoogle(response){
@@ -26,14 +27,40 @@ export default class Login extends Component {
             mode: 'cors',
             cache: 'default'
         };
+        console.log('Click google');
+        axios.post(`${AUTH_HOST}/users/auth/google`, {
+            data: tokenBlob, 
+            headers: {
+                'accept': 'application/json',
+                'Accept-Language': 'en-US,en;q=0.8',
+                'Content-Type': 'application/json',
+                'mode': 'cors',
+                'cache': 'default'
+            },
+            withCredentials: true,
+            }).then(res => {
+                console.log(res);
+                const token = res.headers.get('x-auth-token');
+                res.json().then(user => {
+                if (token) {
+                    // this.setState({isAuthenticated: true, user, token})
+                    console.log(user);
+                    console.log(token);
+                }
+            });
+        });
+        /*
         fetch('http://localhost:3002/users/auth/google', options).then(r => {
             const token = r.headers.get('x-auth-token');
             r.json().then(user => {
                 if (token) {
-                    this.setState({isAuthenticated: true, user, token})
+                    // this.setState({isAuthenticated: true, user, token})
+                    console.log(user);
+                    console.log(token);
                 }
             });
         })
+        */
     }
 
     async componentDidMount() {
