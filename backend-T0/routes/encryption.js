@@ -4,13 +4,14 @@ var router = express.Router();
 const {client} = require('../database');
 let AWS = require('aws-sdk');
 const execSync = require('child_process').execSync;
-const LOCAL = true;
 const {emitAuthMessageToRoom, io} = require('../websocket');
 
-// const {LOCAL} = require("../bin/www");
+const {LOCAL} = require("../bin/www");
+console.log("Local is: ", LOCAL);
 
 var myIp;
 if (!LOCAL) {
+  console.log("Local inside here is: ", LOCAL);
   myIp = execSync(
     'curl http://169.254.169.254/latest/meta-data/public-hostname',
     {encoding: 'utf-8'},
