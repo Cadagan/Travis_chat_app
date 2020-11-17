@@ -3,7 +3,10 @@ import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import {AUTH_HOST} from '../../App';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
+import GoogleLogin from "react-google-login";
+import config from "../../config";
 const cookies = new Cookies();
+
 
 export default class Login extends Component {
     constructor(props) {
@@ -13,6 +16,24 @@ export default class Login extends Component {
         this.onChange = this.onChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.onGoogle = this.onGoogle.bind(this);
+    }
+
+    responseGoogle(response){
+        const tokenBlob = new Blob([JSON.stringify({access_token: response.accessToken}, null, 2)], {type : 'application/json'});
+        const options = {
+            method: 'POST',
+            body: tokenBlob,
+            mode: 'cors',
+            cache: 'default'
+        };
+        fetch('http://localhost:3002/users/auth/google', options).then(r => {
+            const token = r.headers.get('x-auth-token');
+            r.json().then(user => {
+                if (token) {
+                    this.setState({isAuthenticated: true, user, token})
+                }
+            });
+        })
     }
 
     async componentDidMount() {
@@ -132,15 +153,13 @@ export default class Login extends Component {
                             </p>
                         </form>
                         <div className={'google-btn'}>
-                            <div className={'google-icon-wrapper'}>
-                                <img
-                                    className="google-icon-svg"
-                                    src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-                                />
-                            </div>
-                            <p onClick={this.onGoogle} className="btn-text">
-                                <b>Sign in with Google</b>
-                            </p>
+                            <GoogleLogin
+                                clientId={config.GOOGLE_CLIENT_ID}
+                                buttonText="Login with Google"
+                                onSuccess={this.responseGoogle}
+                                onFailure={this.responseGoogle}
+                                cookiePolicy={'single_host_origin'}
+                            />
                         </div>
                     </div>
                 </div>
