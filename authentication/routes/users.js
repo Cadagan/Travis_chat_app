@@ -64,9 +64,9 @@ function (accessToken, refreshToken, profile, done) {
                     insertToDatabase(
                         profile.displayName, profile.displayName, "INVALIDHASH", profile.emails[0].value, profile.id
                     ).then(request =>{
-                        const jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
+                        //const jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
                         console.log("Before send user just registered information");
-                        return done(null, {username: profile.displayName, token: jsonWebToken});
+                        return done(null, {username: profile.displayName, role: 'user'});
                     });
                 } catch(e) {
                 return done(null, false);
@@ -78,25 +78,26 @@ function (accessToken, refreshToken, profile, done) {
                     user.username = message.username;
                     user.role = message.role;
                 });
-                const jsonWebToken = jwt.sign({name: user.name, username: user.username, role: user.role}, keys.jwt);
+                //const jsonWebToken = jwt.sign({name: user.name, username: user.username, role: user.role}, keys.jwt);
                 console.log("Before send user already registered information");
-                return done(null, {username: user.username, token: jsonWebToken});
+                return done(null, {username: user.username, role: user.role});
             }
         }
     });
 }));
 
-router.post('/auth/google', (passport.authenticate('google-token', {session: false}), function(req, res, next) {
+router.post('/auth/google', passport.authenticate('google-token', {session: false}), function(req, res, next) {
         if (!req.user) {
             return res.send(401, 'User Not Authenticated');
         }
+        console.log(req.user);
         req.auth = {
-            id: req.user.id
+            username: req.user.username,
+            role: req.user.role,
         };
 
         next();
-    }, generateToken, sendToken));
-
+    }, generateToken, sendToken);
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
