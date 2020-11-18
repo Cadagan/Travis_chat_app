@@ -1,3 +1,4 @@
+const {checkJwt} = require('../utils/jwtUtils');
 var express = require('express');
 var router = express.Router();
 const bcrypt = require ('bcrypt');
@@ -5,15 +6,18 @@ const {client} = require("../database");
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 const execSync = require('child_process').execSync;
+const jwtAuthz = require('express-jwt-authz');
 const jwt = require('jsonwebtoken');
 const {LOCAL} = require("../bin/www");
+var myIp;
 if (!LOCAL) {
-  var myIp = execSync(
+  myIp = execSync(
       'curl http://169.254.169.254/latest/meta-data/public-hostname',
       { encoding: 'utf-8' }
     );
+} else {
+  myIp = '';
 }
-
 async function validPassword(password, hash){
   return bcrypt.compare(password, hash);
 }
@@ -151,7 +155,7 @@ router.post('/logout', function(req, res, next) {
   res.status(200).send('OK');
 });
 
-router.get('/username', function(req, res, next) {
+router.get('/username', checkJwt, jwtAuthz(['read:username']), function(req, res, next) {
   // res.append('CurrentInstance', myIp);
   console.log(req.user);
   if (!req.user) {
@@ -162,6 +166,7 @@ router.get('/username', function(req, res, next) {
   }
 });
 
+module.exports = router;
 async function insertToDatabase(name, username, hashedPassword, email){
   console.log(`Inserting new user: '${username}'`);
   try {

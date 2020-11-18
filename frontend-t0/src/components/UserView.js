@@ -1,8 +1,11 @@
 import React from 'react';
 import Cookies from 'universal-cookie';
 import {BACKEND_HOST, LOCAL} from '../App';
+import axios from "axios";
 const cookies = new Cookies();
-export default class UserView extends React.Component {
+const {withAuth0} = require("@auth0/auth0-react");
+
+class UserView extends React.Component {
   constructor(props) {
     super(props);
     this.id = props.userData.id;
@@ -10,6 +13,7 @@ export default class UserView extends React.Component {
     this.name = props.userData.name;
     this.email = props.userData.email;
     this.role = props.userData.role;
+    this.obtainAccessToken = props.obtainAccessToken;
     this.editUsername = this.editUsername.bind(this);
     this.editName = this.editName.bind(this);
     this.editEmail = this.editEmail.bind(this);
@@ -25,12 +29,18 @@ export default class UserView extends React.Component {
     if (input !== '666') {
       console.log(`id: ${this.id}, username: ${this.username}`)
       const data = {id: this.id, username: input};
-      fetch(`${BACKEND_HOST}/admin/editUsername`, {
-        method: 'POST', // or 'PUT'
-        body: JSON.stringify(data), // data can be `string` or {object}!
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      this.obtainAccessToken(`http://localhost:3001`,'update:user').then(accessToken=>{
+        axios.post(`${BACKEND_HOST}/admin/editUsername`, data,{
+          headers: {
+            'accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Content-Type': 'application/json',
+            'mode': 'cors',
+            'cache': 'default',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          withCredentials: true,
+        })
       });
       window.location.reload();
     }
@@ -43,12 +53,19 @@ export default class UserView extends React.Component {
     console.log(`editName input: ${input}`);
     if (input !== '666') {
       const data = {id: this.id, name: input};
-      fetch(`${BACKEND_HOST}/admin/editName`, {
-        method: 'POST', // or 'PUT'
-        body: JSON.stringify(data), // data can be `string` or {object}!
-        headers: {
-          'Content-Type': 'application/json',
-        },
+
+      this.obtainAccessToken(`http://localhost:3001`,'update:user').then(accessToken=>{
+        axios.post(`${BACKEND_HOST}/admin/editName`, data,{
+          headers: {
+            'accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Content-Type': 'application/json',
+            'mode': 'cors',
+            'cache': 'default',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          withCredentials: true,
+        })
       });
       window.location.reload();
     }
@@ -61,12 +78,18 @@ export default class UserView extends React.Component {
     console.log(`editEmail input: ${input}`);
     if (input !== '666') {
       const data = {id: this.id, email: input};
-      fetch(`${BACKEND_HOST}/admin/editEmail`, {
-        method: 'POST', // or 'PUT'
-        body: JSON.stringify(data), // data can be `string` or {object}!
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      this.obtainAccessToken(`http://localhost:3001`,'update:user').then(accessToken=>{
+        axios.post(`${BACKEND_HOST}/admin/editEmail`,data, {
+          headers: {
+            'accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Content-Type': 'application/json',
+            'mode': 'cors',
+            'cache': 'default',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          withCredentials: true,
+        })
       });
       window.location.reload();
     }
@@ -79,12 +102,18 @@ export default class UserView extends React.Component {
     console.log(`editRole input: ${input}`);
     if (input !== '666') {
       const data = {id: this.id, role: input};
-      fetch(`${BACKEND_HOST}/admin/editRole`, {
-        method: 'POST', // or 'PUT'
-        body: JSON.stringify(data), // data can be `string` or {object}!
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      this.obtainAccessToken(`http://localhost:3001`,'update:user').then(accessToken=>{
+        axios.post(`${BACKEND_HOST}/admin/editRole`, data,{
+          headers: {
+            'accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Content-Type': 'application/json',
+            'mode': 'cors',
+            'cache': 'default',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          withCredentials: true,
+        })
       });
       window.location.reload();
     }
@@ -97,12 +126,18 @@ export default class UserView extends React.Component {
     console.log(`editGoogleid input: ${input}`);
     if (input !== '666') {
       const data = {id: this.id, googleid: input};
-      fetch(`${BACKEND_HOST}/admin/editGoogleid`, {
-        method: 'POST', // or 'PUT'
-        body: JSON.stringify(data), // data can be `string` or {object}!
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      this.obtainAccessToken(`http://localhost:3001`,'update:user').then(accessToken=>{
+        axios.post(`${BACKEND_HOST}/admin/editGoogleid`, data,{
+          headers: {
+            'accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Content-Type': 'application/json',
+            'mode': 'cors',
+            'cache': 'default',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          withCredentials: true,
+        })
       });
       window.location.reload();
     }
@@ -138,3 +173,5 @@ export default class UserView extends React.Component {
     );
   }
 }
+
+export default withAuth0(UserView);

@@ -1,3 +1,6 @@
+const {checkJwt} = require('../utils/jwtUtils');
+const jwtAuthz = require('express-jwt-authz');
+
 require('dotenv').config();
 var express = require('express');
 var router = express.Router();
@@ -6,7 +9,7 @@ const {client} = require('../database');
 let AWS = require('aws-sdk');
 const fetch = require('node-fetch');
 const execSync = require('child_process').execSync;
-const {LOCAL} = require("../bin/www");
+const {LOCAL} = require('../bin/www');
 
 var myIp;
 if (!LOCAL) {
@@ -19,7 +22,11 @@ if (!LOCAL) {
 }
 
 /* GET home page. */
-router.get('/users/latest/:count', function(req, res, next) {
+router.get('/users/latest/:count', checkJwt, jwtAuthz(['read:user']), function(
+  req,
+  res,
+  next,
+) {
   console.log('Getting latest users');
   let count = req.params.count;
   const query = {
@@ -55,7 +62,11 @@ function sendUsers(query, res) {
   });
 }
 
-router.post('/users/before/:count', function(req, res, next) {
+router.post('/users/before/:count', checkJwt, jwtAuthz(['read:user']), function(
+  req,
+  res,
+  next,
+) {
   let count = req.params.count;
   let id = req.body.id;
   const query = {
@@ -69,7 +80,11 @@ router.post('/users/before/:count', function(req, res, next) {
   sendUsers(query, res);
 });
 
-router.post('/editUsername', function(req, res, next) {
+router.post('/editUsername', checkJwt, jwtAuthz(['update:user']), function(
+  req,
+  res,
+  next,
+) {
   let username = req.body.username;
   let id = req.body.id;
   try {
@@ -79,7 +94,11 @@ router.post('/editUsername', function(req, res, next) {
     console.log(error);
   }
 });
-router.post('/editName', function(req, res, next) {
+router.post('/editName', checkJwt, jwtAuthz(['update:user']), function(
+  req,
+  res,
+  next,
+) {
   let name = req.body.name;
   let id = req.body.id;
   try {
@@ -89,7 +108,11 @@ router.post('/editName', function(req, res, next) {
     console.log(error);
   }
 });
-router.post('/editEmail', function(req, res, next) {
+router.post('/editEmail', checkJwt, jwtAuthz(['update:user']), function(
+  req,
+  res,
+  next,
+) {
   let email = req.body.email;
   let id = req.body.id;
   try {
@@ -99,7 +122,11 @@ router.post('/editEmail', function(req, res, next) {
     console.log(error);
   }
 });
-router.post('/editRole', function(req, res, next) {
+router.post('/editRole', checkJwt, jwtAuthz(['update:user']), function(
+  req,
+  res,
+  next,
+) {
   let role = req.body.role;
   let id = req.body.id;
   try {
@@ -109,7 +136,11 @@ router.post('/editRole', function(req, res, next) {
     console.log(error);
   }
 });
-router.post('/editGoogleid', function(req, res, next) {
+router.post('/editGoogleid', checkJwt, jwtAuthz(['update:user']), function(
+  req,
+  res,
+  next,
+) {
   let googleid = req.body.googleid;
   let id = req.body.id;
   try {
@@ -119,7 +150,11 @@ router.post('/editGoogleid', function(req, res, next) {
     console.log(error);
   }
 });
-router.post('/deleteRoom', function(req, res, next) {
+router.post('/deleteRoom', checkJwt, jwtAuthz(['delete:room']), function(
+  req,
+  res,
+  next,
+) {
   let roomId = req.body.roomid;
   try {
     console.log(`deleting room roomId: ${roomId}`);
@@ -129,7 +164,11 @@ router.post('/deleteRoom', function(req, res, next) {
   }
 });
 
-router.post('/togglePrivate', function(req, res, next) {
+router.post('/togglePrivate', checkJwt, jwtAuthz(['update:room']), function(
+  req,
+  res,
+  next,
+) {
   let roomId = req.body.roomid;
   try {
     console.log(`Toggling private for: ${roomId}`);
@@ -139,7 +178,11 @@ router.post('/togglePrivate', function(req, res, next) {
   }
 });
 
-router.post('/editMessage', function(req, res, next) {
+router.post('/editMessage', checkJwt, jwtAuthz(['update:message']), function(
+  req,
+  res,
+  next,
+) {
   let messageId = req.body.id;
   let message = req.body.message;
   try {
@@ -150,7 +193,11 @@ router.post('/editMessage', function(req, res, next) {
   }
 });
 
-router.post('/censureMessage', function(req, res, next) {
+router.post('/censureMessage', checkJwt, jwtAuthz(['update:message']), function(
+  req,
+  res,
+  next,
+) {
   let messageId = req.body.id;
   try {
     console.log(`Censuring message for  ${messageId}`);

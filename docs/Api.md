@@ -9,6 +9,8 @@
 Array of rooms.
 ```
 ---
+router.get('/users/latest/:count', function(req, res, next) {
+});
 #### URL :${BACKEND_HOST}/users/latest/:count`
 #### GET:
 
@@ -469,6 +471,7 @@ router.post('/signup', function(req, res, next) {
   }
 });
 
+---
 router.post(
   '/signin',
   passport.authenticate('local', {
