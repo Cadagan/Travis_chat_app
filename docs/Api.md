@@ -9,10 +9,6 @@
 Array of rooms.
 ```
 ---
-<<<<<<< HEAD
-router.get('/users/latest/:count', function(req, res, next) {
-});
-=======
 #### URL :${BACKEND_HOST}/users/latest/:count`
 #### GET:
 
@@ -27,21 +23,17 @@ Array of rooms.
 #### Success Response
 ```
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/editUsername', function(req, res, next) {
   let username = req.body.username;
   let id = req.body.id;
 });
 
-<<<<<<< HEAD
-
 router.post('/users/before/:count', function(req, res, next) {
   let count = req.params.count;
   let id = req.body.id;
 });
 
-=======
 ---
 #### URL :${BACKEND_HOST}/users/before/:count`
 #### POST:
@@ -50,20 +42,17 @@ router.post('/users/before/:count', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/users/before/:count', function(req, res, next) {
   let count = req.params.count;
   let id = req.body.id;
 });
 
-<<<<<<< HEAD
 
 router.post('/editUsername', function(req, res, next) {
   let username = req.body.username;
   let id = req.body.id;
 });
-=======
 ---
 #### URL :${BACKEND_HOST}/admin/editName`
 #### POST:
@@ -72,7 +61,6 @@ router.post('/editUsername', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 
 router.post('/editName', function(req, res, next) {
@@ -84,8 +72,6 @@ router.post('/editName', function(req, res, next) {
   }
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/admin/editEmail`
@@ -95,7 +81,6 @@ router.post('/editName', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/editEmail', function(req, res, next) {
   let email = req.body.email;
@@ -106,8 +91,6 @@ router.post('/editEmail', function(req, res, next) {
   }
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/admin/editRole`
@@ -117,7 +100,6 @@ router.post('/editEmail', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/editRole', function(req, res, next) {
   let role = req.body.role;
@@ -128,8 +110,6 @@ router.post('/editRole', function(req, res, next) {
   }
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/admin/editGoogleid`
@@ -139,7 +119,6 @@ router.post('/editRole', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/editGoogleid', function(req, res, next) {
   let googleid = req.body.googleid;
@@ -150,8 +129,6 @@ router.post('/editGoogleid', function(req, res, next) {
   }
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/admin/deleteRoom`
@@ -161,7 +138,6 @@ router.post('/editGoogleid', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/deleteRoom', function(req, res, next) {
   let roomId = req.body.roomid;
@@ -171,8 +147,6 @@ router.post('/deleteRoom', function(req, res, next) {
   }
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/admin/togglePrivate`
@@ -182,7 +156,6 @@ router.post('/deleteRoom', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/togglePrivate', function(req, res, next) {
   let roomId = req.body.roomid;
@@ -192,8 +165,6 @@ router.post('/togglePrivate', function(req, res, next) {
   }
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/admin/editMessage`
@@ -203,7 +174,6 @@ router.post('/togglePrivate', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/editMessage', function(req, res, next) {
   let messageId = req.body.id;
@@ -214,8 +184,6 @@ router.post('/editMessage', function(req, res, next) {
   }
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/admin/censureMessage`
@@ -225,7 +193,6 @@ router.post('/editMessage', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/censureMessage', function(req, res, next) {
   let messageId = req.body.id;
@@ -235,8 +202,6 @@ router.post('/censureMessage', function(req, res, next) {
   }
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/encryption/public_key`
@@ -246,7 +211,6 @@ router.post('/censureMessage', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/public_key', function(req, res, next) {
   let publicKey = req.body.publicKey;
@@ -259,8 +223,6 @@ router.post('/public_key', function(req, res, next) {
   res.status(200).send(object);
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/messages/:roomid/before/:count`
@@ -270,7 +232,6 @@ router.post('/public_key', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/:roomid/before/:count', function(req, res, next) {
   let count = req.params.count;
@@ -282,8 +243,6 @@ router.post('/:roomid/before/:count', function(req, res, next) {
   sendMessages(query, res);
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/messages/new`
@@ -294,7 +253,6 @@ router.post('/:roomid/before/:count', function(req, res, next) {
 Array of rooms.
 ```
 
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/new', function(req, res, next) {
     let roomId = req.body.roomId;
@@ -336,8 +294,6 @@ router.post('/new', function(req, res, next) {
     }
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/messages/:roomid/latest/:count`
@@ -347,7 +303,6 @@ router.post('/new', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.get('/:roomid/latest/:count', function(req, res, next) {
   let count = req.params.count;
@@ -358,7 +313,6 @@ router.get('/:roomid/latest/:count', function(req, res, next) {
   sendMessages(query, res);
 });
 
-<<<<<<< HEAD
 
 router.get(
   '/oathsignup',
@@ -385,7 +339,6 @@ router.get(
   },
 );
 
-=======
 ---
 
 #### URL :${BACKEND_HOST}/users/username`
@@ -395,7 +348,6 @@ router.get(
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.get('/username', function(req, res, next) {
   if (!req.user) {
@@ -404,8 +356,6 @@ router.get('/username', function(req, res, next) {
   }
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/users/signup`
@@ -415,7 +365,6 @@ router.get('/username', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/signup', function(req, res, next) {
   const saltRounds = 10;
@@ -438,8 +387,6 @@ router.post('/signup', function(req, res, next) {
   }
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/users/signin`
@@ -449,7 +396,6 @@ router.post('/signup', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post(
   '/signin',
@@ -476,8 +422,6 @@ router.post(
   },
 );
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/users/logout`
@@ -487,7 +431,6 @@ router.post(
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/logout', function(req, res, next) {
   req.logout();
@@ -495,8 +438,6 @@ router.post('/logout', function(req, res, next) {
   res.status(200).send('OK');
 });
 
-<<<<<<< HEAD
-=======
 ---
 
 #### URL :${BACKEND_HOST}/users/signup`
@@ -506,7 +447,6 @@ router.post('/logout', function(req, res, next) {
 ```
 Array of rooms.
 ```
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 router.post('/signup', function(req, res, next) {
   const saltRounds = 10;
@@ -529,8 +469,6 @@ router.post('/signup', function(req, res, next) {
   }
 });
 
-<<<<<<< HEAD
-
 router.post(
   '/signin',
   passport.authenticate('local', {
@@ -558,6 +496,4 @@ router.post(
 
 
 
-=======
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 ---

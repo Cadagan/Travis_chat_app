@@ -1,22 +1,11 @@
 import React, {Component} from 'react';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
-<<<<<<< HEAD
-import {BACKEND_HOST} from '../../App';
 import {AUTH_HOST} from '../../App';
 import {setUsername} from '../../sessions';
 import {Switch} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 const cookies = new Cookies();
-=======
-import {AUTH_HOST} from '../../App';
-import Cookies from 'universal-cookie';
-import axios from 'axios';
-import GoogleLogin from "react-google-login";
-import config from "../../config";
-const cookies = new Cookies();
-
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 export default class Login extends Component {
     constructor(props) {
@@ -28,8 +17,6 @@ export default class Login extends Component {
         this.onGoogle = this.onGoogle.bind(this);
     }
 
-<<<<<<< HEAD
-=======
     responseGoogle(response){
         const tokenBlob = new Blob([JSON.stringify({access_token: response.accessToken}, null, 2)], {type : 'application/json'});
         const options = {
@@ -47,8 +34,6 @@ export default class Login extends Component {
             });
         })
     }
-
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
     async componentDidMount() {
         axios.get(`${AUTH_HOST}/users/login/success`, {
             headers: {
@@ -69,11 +54,7 @@ export default class Login extends Component {
         e.preventDefault();
         const data = {username: this.state.username, password: this.state.password};
 
-<<<<<<< HEAD
-        fetch(`${BACKEND_HOST}/users/signin`, {
-=======
         fetch(`${AUTH_HOST}/users/signin`, {
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
             method: 'POST', // or 'PUT'
             body: JSON.stringify(data), // data can be `string` or {object}!
             //credentials: 'include',
@@ -107,11 +88,8 @@ export default class Login extends Component {
 
 
     onGoogle() {
-<<<<<<< HEAD
         window.open('http://localhost:3001/users/oathsignup', '_self');
-=======
         window.open(`${AUTH_HOST}/users/oathsignup`, '_self');
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
         console.log("You clicked google");
 
         window.location = `${AUTH_HOST}/users/auth/google`;
@@ -174,17 +152,6 @@ export default class Login extends Component {
                             </p>
                         </form>
                         <div className={'google-btn'}>
-<<<<<<< HEAD
-                            <div className={'google-icon-wrapper'}>
-                                <img
-                                    className="google-icon-svg"
-                                    src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-                                />
-                            </div>
-                            <p onClick={this.onGoogle} className="btn-text">
-                                <b>Sign in with Google</b>
-                            </p>
-=======
                             <GoogleLogin
                                 clientId={config.GOOGLE_CLIENT_ID}
                                 buttonText="Login with Google"
@@ -192,7 +159,6 @@ export default class Login extends Component {
                                 onFailure={this.responseGoogle}
                                 cookiePolicy={'single_host_origin'}
                             />
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
                         </div>
                     </div>
                 </div>

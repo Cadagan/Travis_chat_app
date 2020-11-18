@@ -6,14 +6,7 @@ const {client} = require('../database');
 let AWS = require('aws-sdk');
 const fetch = require('node-fetch');
 const execSync = require('child_process').execSync;
-<<<<<<< HEAD
-const LOCAL = false;
-
-// const {LOCAL} = require("../bin/www");
-=======
-
 const {LOCAL} = require("../bin/www");
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 var myIp;
 if (!LOCAL) {

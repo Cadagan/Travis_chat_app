@@ -6,10 +6,7 @@ var passport = require('passport');
 const keys = require("../oauth_keys");
 const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
 const jwt = require('jsonwebtoken');
-<<<<<<< HEAD
-=======
 const LocalStrategy = require('passport-local').Strategy;
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 let user_auth = {};
 
@@ -21,18 +18,6 @@ router.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
-<<<<<<< HEAD
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-
-=======
-
 
 async function validPassword(password, hash){
     return bcrypt.compare(password, hash);
@@ -165,7 +150,6 @@ router.get(
 );
 
 
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 passport.use(new GoogleStrategy({
       clientID: keys.google.clientID,
       clientSecret: keys.google.clientSecret,
@@ -260,8 +244,6 @@ async function insertToDatabase(name, username, hashedPassword, email, googleId)
   }
 }
 
-<<<<<<< HEAD
-=======
 async function getUserRole(username) {
     console.log(`Getting user role of username: ${username}`);
     const query = {
@@ -283,6 +265,5 @@ async function getUserRole(username) {
         }
     });
 }
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 module.exports = router;
