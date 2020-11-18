@@ -1,7 +1,6 @@
 const {checkJwt} = require('../utils/jwtUtils');
 const jwtAuthz = require('express-jwt-authz');
 
-
 require('dotenv').config();
 const url = require('url');
 var express = require('express');
@@ -9,10 +8,7 @@ const aws = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const multer = require('multer');
 const path = require('path');
-<<<<<<< HEAD
-=======
-const {LOCAL} = require("../bin/www");
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
+const {LOCAL} = require('../bin/www');
 var router = express.Router();
 
 var accessKeyId = process.env.accessKeyId;
@@ -20,9 +16,6 @@ var secretAccessKey = process.env.secretAccessKey;
 var bucket_used = process.env.s3_bucket;
 const execSync = require('child_process').execSync;
 
-<<<<<<< HEAD
-const LOCAL = false;
-
 var myIp;
 if (!LOCAL) {
   myIp = execSync(
@@ -33,18 +26,6 @@ if (!LOCAL) {
   myIp = '';
 }
 
-=======
-var myIp;
-if (!LOCAL) {
-  myIp = execSync(
-    'curl http://169.254.169.254/latest/meta-data/public-hostname',
-    {encoding: 'utf-8'},
-  );
-} else {
-  myIp = '';
-}
-
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 const {client} = require('../database');
 
 // Cita: https://codeytek.com/course/upload-files-images-on-amazon-web-services-course/upload-files-images-on-amazon-web-services-content/file-uploads-on-amazon-web-services-aws-multer-s3-node-js-react-js-express-aws-sdk/
@@ -96,36 +77,47 @@ function checkFileType(file, cb) {
  * @desc Upload post image
  * @access public
  */
-router.post('/:roomid/chat-img-upload', checkJwt, jwtAuthz(['create:image']),(req, res) => {
-  chatImgUpload(req, res, error => {
-    // console.log( 'requestOkokok', req.file );
-    // console.log( 'error', error );
-    res.append('CurrentInstance', myIp);
-    if (error) {
-      console.log('errors', error);
-      res.json({error: error});
-    } else {
-      // If File not found
-      if (req.file === undefined) {
-        console.log('Error: No File Selected!');
-        res.json('Error: No File Selected');
+router.post(
+  '/:roomid/chat-img-upload',
+  checkJwt,
+  jwtAuthz(['create:image']),
+  (req, res) => {
+    chatImgUpload(req, res, error => {
+      // console.log( 'requestOkokok', req.file );
+      // console.log( 'error', error );
+      res.append('CurrentInstance', myIp);
+      if (error) {
+        console.log('errors', error);
+        res.json({error: error});
       } else {
-        // If Success
-        const imageName = req.file.key;
-        const imageLocation = req.file.location; // Save the file name into database into chat model
-        insertImageToDatabase(imageLocation, req.params.roomid).then(result => {
-          //If it worked we send it immediately
-          res.json({
-            image: imageName,
-            location: imageLocation,
-          });
-        });
+        // If File not found
+        if (req.file === undefined) {
+          console.log('Error: No File Selected!');
+          res.json('Error: No File Selected');
+        } else {
+          // If Success
+          const imageName = req.file.key;
+          const imageLocation = req.file.location; // Save the file name into database into chat model
+          insertImageToDatabase(imageLocation, req.params.roomid).then(
+            result => {
+              //If it worked we send it immediately
+              res.json({
+                image: imageName,
+                location: imageLocation,
+              });
+            },
+          );
+        }
       }
-    }
-  });
-});
+    });
+  },
+);
 
-router.get('/:roomid/image', checkJwt,jwtAuthz(['read:image']),function(req, res, next) {
+router.get('/:roomid/image', checkJwt, jwtAuthz(['read:image']), function(
+  req,
+  res,
+  next,
+) {
   let room_id = req.params.roomid;
   res.append('CurrentInstance', myIp);
   const query = {
@@ -156,7 +148,11 @@ router.get('/:roomid/image', checkJwt,jwtAuthz(['read:image']),function(req, res
   });
 });
 
-router.post('/join', checkJwt,jwtAuthz(['interact:room']), function(req, res, next) {
+router.post('/join', checkJwt, jwtAuthz(['interact:room']), function(
+  req,
+  res,
+  next,
+) {
   let id = req.body.roomid;
   let password = req.body.password;
   console.log(`joining with id: ${id} and password ${password}`);
@@ -193,7 +189,7 @@ router.get('/', checkJwt, jwtAuthz(['read:room']), function(req, res, next) {
     name: 'fetch-user',
     text: 'SELECT name,id, private FROM rooms',
   };
-  console.log("Here2");
+  console.log('Here2');
   client.query(query, (err, queryRes) => {
     if (err) {
       console.log(err.stack);
@@ -206,12 +202,16 @@ router.get('/', checkJwt, jwtAuthz(['read:room']), function(req, res, next) {
         });
       });
     }
-    console.log("Here3");
+    console.log('Here3');
     res.status(200).send(rooms);
   });
 });
 
-router.post('/new', checkJwt,jwtAuthz(["create:room"]),function(req, res, next) {
+router.post('/new', checkJwt, jwtAuthz(['create:room']), function(
+  req,
+  res,
+  next,
+) {
   res.append('CurrentInstance', myIp);
   let roomName = req.body.roomName;
   let isPrivate = req.body.private;
