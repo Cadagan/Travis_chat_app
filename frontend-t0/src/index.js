@@ -11,20 +11,23 @@ import config from "./config";
 
 ReactDOM.render(
     <BrowserRouter>
-        <Route exact path='/' component={App} />
-        <Switch>
 
         <Auth0Provider
             domain={config.AUTH0_DOMAIN}
             clientId={config.AUTH0_CLIENT_ID}
-            redirectUri={window.location.origin}
+            redirectUri={"http://localhost:3000"}
+            audience={"http://localhost:3001"}
+            scope={"read:username create:image read:image interact:room read:room create:room read:message " +
+            "create:message read:user update:message update:room delete:room update:user"}
         >
+        <Route exact path='/' component={App} />
+        <Switch>
 
             <Route path="/sign-in" render={(props) => <Login {...props} setSessionID={session.setSessionID}/>}/>
             <Route path="/sign-up" component={SignUp} />
 
-        </Auth0Provider>,
         </Switch>
+        </Auth0Provider>,
     </BrowserRouter>,
     document.getElementById("root")
 );

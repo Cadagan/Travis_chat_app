@@ -2,14 +2,17 @@ import React from 'react';
 import Cookies from 'universal-cookie';
 import {BACKEND_HOST} from '../App';
 import {setPrivateRoom} from "./events/chatroomEvents";
+import axios from "axios";
 const cookies = new Cookies();
+const {withAuth0} = require("@auth0/auth0-react");
 
-export default class RoomMenuComponent extends React.Component {
+class RoomMenuComponent extends React.Component {
   constructor(props) {
     super(props);
     this.roomName = props.roomData['roomName'];
     this.setCurrentRoomId = props.setCurrentRoomId;
     this.setRoomPassword = props.setRoomPassword;
+    this.obtainAccessToken = props.obtainAccessToken;
     this.roomId = props.roomData['roomId'];
     this.private = props.roomData['private'];
     this.password = props.roomData['password'];
@@ -24,35 +27,45 @@ export default class RoomMenuComponent extends React.Component {
       password = prompt('Password');
     }
     let data = {roomid: this.roomId, password: password};
-    fetch(`${BACKEND_HOST}/rooms/join`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(r => r.json())
-      .then(r => {
-        console.log(r);
-        if (r.passwordCorrect === 'true') {
-          setPrivateRoom(this.private);
-          this.setCurrentRoomId(this.roomId);
-          this.setRoomPassword(this.password);
-        } else {
-          alert('Wrong password :)');
-        }
-      });
+    this.obtainAccessToken(`http://localhost:3001`,'interact:room').then(accessToken=> {
+      axios.post(`${BACKEND_HOST}/rooms/join`, data, {
+        headers: {
+          'accept': 'application/json',
+          'Accept-Language': 'en-US,en;q=0.8',
+          'mode': 'cors',
+          'cache': 'default',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        withCredentials: true,
+      })
+          .then(r => {
+            r = r.data;
+            console.log(r);
+            if (r.passwordCorrect === 'true') {
+              setPrivateRoom(this.private);
+              this.setCurrentRoomId(this.roomId);
+              this.setRoomPassword(this.password);
+            } else {
+              alert('Wrong password :)');
+            }
+          });
+    });
   }
 
   deleteRoom() {
     let data = {roomid: this.roomId};
     console.log(`deleting room with room id: ${this.roomId}`);
-    fetch(`${BACKEND_HOST}/admin/deleteRoom`, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    this.obtainAccessToken(`http://localhost:3001`,'delete:room').then(accessToken=> {
+      axios.post(`${BACKEND_HOST}/admin/deleteRoom`, data, {
+        headers: {
+          'accept': 'application/json',
+          'Accept-Language': 'en-US,en;q=0.8',
+          'mode': 'cors',
+          'cache': 'default',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        withCredentials: true,
+      })
     });
     window.location.reload();
   }
@@ -78,3 +91,4 @@ export default class RoomMenuComponent extends React.Component {
     );
   }
 }
+export default withAuth0(RoomMenuComponent);

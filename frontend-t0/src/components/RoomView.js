@@ -9,9 +9,9 @@ import $ from 'jquery';
 import {isPrivateRoom, onMessageRecieved, onMessageSend, userJoinChatroomEvent} from "./events/chatroomEvents";
 import {pgpKey} from "./services/PGPKey";
 const cookies = new Cookies();
+const {withAuth0} = require("@auth0/auth0-react");
 
-
-export default class RoomView extends React.Component {
+class RoomView extends React.Component {
     constructor(props) {
         super(props);
         const ENDPOINT = `${BACKEND_HOST}`;
@@ -19,6 +19,7 @@ export default class RoomView extends React.Component {
         this.setCurrentRoomId = props.setCurrentRoomId;
         this.roomName = props.roomName;
         this.sessionData = props.sessionData;
+        this.obtainAccessToken = props.obtainAccessToken;
         this.state = {message: "", messages: [], loadingMessages: true, selectedFile: null,selectedFiles: null};
         this.handleChange = this.handleChange.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
@@ -44,33 +45,40 @@ export default class RoomView extends React.Component {
         const data = new FormData();// If file selected
         if ( this.state.selectedFile ) {
             data.append( 'chatImage', this.state.selectedFile, this.state.selectedFile.name );
-            axios.post( `${BACKEND_HOST}/rooms/${this.sessionData.roomId}/chat-img-upload`, data, {
-                headers: {
-                    'accept': 'application/json',
-                    'Accept-Language': 'en-US,en;q=0.8',
-                    'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                }
-            })
-                .then( ( response ) => {if ( 200 === response.status ) {
-                    // If file size is larger than expected.
-                    if( response.data.error ) {
-                        if ( 'LIMIT_FILE_SIZE' === response.data.error.code ) {
-                            this.ocShowAlert( 'Max size: 2MB', 'red' );
-                        } else {
-                            console.log( response.data );// If not the given file type
-                            this.ocShowAlert( response.data.error, 'red' );
+            this.obtainAccessToken(`http://localhost:3001`,'create:image').then(accessToken=> {
+                axios.post(`${BACKEND_HOST}/rooms/${this.sessionData.roomId}/chat-img-upload`, data, {
+                    headers: {
+                        'accept': 'application/json',
+                        'Accept-Language': 'en-US,en;q=0.8',
+                        'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+                        'mode': 'cors',
+                        'cache': 'default',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    withCredentials: true,
+                })
+                    .then((response) => {
+                        if (200 === response.status) {
+                            // If file size is larger than expected.
+                            if (response.data.error) {
+                                if ('LIMIT_FILE_SIZE' === response.data.error.code) {
+                                    this.ocShowAlert('Max size: 2MB', 'red');
+                                } else {
+                                    console.log(response.data);// If not the given file type
+                                    this.ocShowAlert(response.data.error, 'red');
+                                }
+                            } else {
+                                // Success
+                                let fileName = response.data;
+                                console.log(`${fileName}, Este es el link a guardar en atributo imagen: ${fileName.location}, `);
+                                this.setState({roomImage: fileName.location});
+                                this.ocShowAlert('File Uploaded', '#3089cf');
+                            }
                         }
-                    } else {
-                        // Success
-                        let fileName = response.data;
-                        console.log( `${fileName}, Este es el link a guardar en atributo imagen: ${fileName.location}, `);
-                        this.setState({roomImage: fileName.location});
-                        this.ocShowAlert( 'File Uploaded', '#3089cf' );
-                    }
-                }
-                }).catch( ( error ) => {
-                // If another error
-                this.ocShowAlert( error, 'red' );
+                    }).catch((error) => {
+                    // If another error
+                    this.ocShowAlert(error, 'red');
+                });
             });
         } else {
             // if file not selected throw error
@@ -130,18 +138,28 @@ export default class RoomView extends React.Component {
         }
     }
     loadMessages(amount){
-        fetch(`${BACKEND_HOST}/messages/${this.sessionData.roomId}/latest/${amount}`)
-            .then( r => r.json())
-            .then(res => {
-                const unciphered_messages = [];
-                res.forEach(message=> {
-                    onMessageRecieved(message, this.socket,cipherMessage=>{
-                        unciphered_messages.push(cipherMessage);
-                    })
-                });
+        this.obtainAccessToken(`http://localhost:3001`,'read:message').then(accessToken=> {
+            axios.get(`${BACKEND_HOST}/messages/${this.sessionData.roomId}/latest/${amount}`, {
+                headers: {
+                    'accept': 'application/json',
+                    'Accept-Language': 'en-US,en;q=0.8',
+                    'mode': 'cors',
+                    'cache': 'default',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                withCredentials: true,
+            })
+                .then(res => {
+                    const unciphered_messages = [];
+                    res.data.forEach(message => {
+                        onMessageRecieved(message, this.socket, cipherMessage => {
+                            unciphered_messages.push(cipherMessage);
+                        })
+                    });
 
-                this.setState({messages: unciphered_messages, loadingMessages: false});
-            });
+                    this.setState({messages: unciphered_messages, loadingMessages: false});
+                });
+        });
     }
 
     postMessage(event) {
@@ -166,16 +184,20 @@ export default class RoomView extends React.Component {
             sender: pgpKey.id()
         };
         onMessageSend(data, (cipherData, keyData) => {
-            fetch(`${BACKEND_HOST}/messages/new`,
-                {
-                    method: 'POST', // or 'PUT'
-                    body: JSON.stringify(cipherData), // data can be `string` or {object}!
+            this.obtainAccessToken(`http://localhost:3001`, 'create:message').then(accessToken => {
+                axios.post(`${BACKEND_HOST}/messages/new`, cipherData, {
                     headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }).then(res=>console.log("Sent message!"));
-            this.setState({message: ""});
-        })
+                        'accept': 'application/json',
+                        'Accept-Language': 'en-US,en;q=0.8',
+                        'mode': 'cors',
+                        'cache': 'default',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    withCredentials: true,
+                }).then(res => console.log("Sent message!"));
+                this.setState({message: ""});
+            })
+        });
     }
 
     messageAdded(message) {
@@ -198,23 +220,23 @@ export default class RoomView extends React.Component {
     }
   getNextMessages(amount) {
     const latest = this.state.messages[0];
-    fetch(
-      `${BACKEND_HOST}/messages/${this.sessionData.roomId}/before/${amount}`,
-      {
-        method: 'POST',
-        body: JSON.stringify(latest),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    )
-      .then(r => r.json())
-      .then(r => {
-        const messages = r;
-        this.state.messages.map(message => messages.push(message));
-        this.setState({messages: []});
-        this.setState({messages: messages});
-      });
+      this.obtainAccessToken(`http://localhost:3001`, 'read:message').then(accessToken => {
+          axios.post(`${BACKEND_HOST}/messages/${this.sessionData.roomId}/before/${amount}`, latest, {
+              headers: {
+                  'accept': 'application/json',
+                  'Accept-Language': 'en-US,en;q=0.8',
+                  'mode': 'cors',
+                  'cache': 'default',
+                  'Authorization': `Bearer ${accessToken}`
+              },
+              withCredentials: true,
+          }).then(r => {
+              const messages = r.data;
+              this.state.messages.map(message => messages.push(message));
+              this.setState({messages: []});
+              this.setState({messages: messages});
+          });
+      })
   }
 
 
@@ -225,10 +247,20 @@ export default class RoomView extends React.Component {
 
 
   getRoomImage() {
-    fetch(`${BACKEND_HOST}/rooms/${this.sessionData.roomId}/image`)
-      .then(res => res.json())
-      .then(data => {
-        this.setState({roomImage: data.roomImage});
+      this.obtainAccessToken(`http://localhost:3001`, 'read:image').then(accessToken => {
+          axios.get(`${BACKEND_HOST}/rooms/${this.sessionData.roomId}/image`,{
+              headers: {
+                  'accept': 'application/json',
+                  'Accept-Language': 'en-US,en;q=0.8',
+                  'mode': 'cors',
+                  'cache': 'default',
+                  'Authorization': `Bearer ${accessToken}`
+              },
+              withCredentials: true,
+          })
+              .then(data => {
+                  this.setState({roomImage: data.data.roomImage});
+              });
       });
   }
 
@@ -269,6 +301,7 @@ export default class RoomView extends React.Component {
                   this.state.messages.map((message, i) => {
                     return (
                       <MessageView
+                          obtainAccessToken={this.obtainAccessToken}
                         messageData={{
                           message: message.message,
                           time: message.time,
@@ -309,3 +342,4 @@ export default class RoomView extends React.Component {
     );
   }
 }
+export default withAuth0(RoomView);

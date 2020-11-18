@@ -1,8 +1,11 @@
 import React from 'react';
 import {BACKEND_HOST, LOCAL} from '../App';
 import Cookies from 'universal-cookie';
+import axios from "axios";
 const cookies = new Cookies();
-export default class MessageView extends React.Component {
+const {withAuth0} = require("@auth0/auth0-react");
+
+class MessageView extends React.Component {
   constructor(props) {
     super(props);
     this.id = props.messageData.id;
@@ -11,6 +14,7 @@ export default class MessageView extends React.Component {
     this.time = props.messageData.time;
     this.username = props.messageData.username;
     this.censured = props.messageData.censured;
+    this.obtainAccessToken = props.obtainAccessToken;
     console.log(`Message censured: ${this.censured}`);
     this.role = cookies.get('role');
     this.editMessage = this.editMessage.bind(this);
@@ -25,12 +29,17 @@ export default class MessageView extends React.Component {
     if (input !== '666') {
       console.log(`id: ${this.id}, message: ${input}`);
       const data = {id: this.id, message: input};
-      fetch(`${BACKEND_HOST}/admin/editMessage`, {
-        method: 'POST', // or 'PUT'
-        body: JSON.stringify(data), // data can be `string` or {object}!
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      this.obtainAccessToken(`http://localhost:3001`,'update:message').then(accessToken=> {
+        axios.post(`${BACKEND_HOST}/admin/editMessage`, data, {
+          headers: {
+            'accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'mode': 'cors',
+            'cache': 'default',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          withCredentials: true,
+        })
       });
       window.location.reload();
     }
@@ -43,12 +52,17 @@ export default class MessageView extends React.Component {
     console.log(`censureMessage input: ${this.id}`);
     console.log(`id: ${this.id}`);
     const data = {id: this.id};
-    fetch(`${BACKEND_HOST}/admin/censureMessage`, {
-      method: 'POST', // or 'PUT'
-      body: JSON.stringify(data), // data can be `string` or {object}!
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    this.obtainAccessToken(`http://localhost:3001`,'update:message').then(accessToken=> {
+      axios.post(`${BACKEND_HOST}/admin/censureMessage`, data, {
+        headers: {
+          'accept': 'application/json',
+          'Accept-Language': 'en-US,en;q=0.8',
+          'mode': 'cors',
+          'cache': 'default',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        withCredentials: true,
+      })
     });
     window.location.reload();
   }
@@ -87,3 +101,4 @@ export default class MessageView extends React.Component {
     );
   }
 }
+export default withAuth0(MessageView);

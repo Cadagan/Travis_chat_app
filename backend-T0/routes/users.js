@@ -1,5 +1,4 @@
-import {checkJwt} from "../utils/jwtUtils";
-
+const {checkJwt} = require('../utils/jwtUtils');
 var express = require('express');
 var router = express.Router();
 const bcrypt = require ('bcrypt');

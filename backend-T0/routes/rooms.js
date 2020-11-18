@@ -1,5 +1,6 @@
-import {checkJwt} from "../utils/jwtUtils";
-import jwtAuthz from "express-jwt-authz";
+const {checkJwt} = require('../utils/jwtUtils');
+const jwtAuthz = require('express-jwt-authz');
+
 
 require('dotenv').config();
 const url = require('url');
@@ -174,7 +175,7 @@ router.get('/', checkJwt, jwtAuthz(['read:room']), function(req, res, next) {
     name: 'fetch-user',
     text: 'SELECT name,id, private FROM rooms',
   };
-
+  console.log("Here2");
   client.query(query, (err, queryRes) => {
     if (err) {
       console.log(err.stack);
@@ -187,6 +188,7 @@ router.get('/', checkJwt, jwtAuthz(['read:room']), function(req, res, next) {
         });
       });
     }
+    console.log("Here3");
     res.status(200).send(rooms);
   });
 });

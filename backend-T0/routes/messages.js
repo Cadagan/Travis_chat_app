@@ -1,5 +1,5 @@
-import {checkJwt} from "../utils/jwtUtils";
-import jwtAuthz from "express-jwt-authz";
+const {checkJwt} = require('../utils/jwtUtils');
+const jwtAuthz = require('express-jwt-authz');
 
 
 require('dotenv').config();

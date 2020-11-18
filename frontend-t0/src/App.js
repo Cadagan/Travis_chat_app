@@ -7,7 +7,8 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import {Button} from 'react-bootstrap';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import Cookies from 'universal-cookie';
-import {userJoinChatroomEvent, userJoinEvent} from "./components/events/chatroomEvents";
+import {userJoinEvent} from "./components/events/chatroomEvents";
+import {withAuth0} from "@auth0/auth0-react";
 
 const cookies = new Cookies();
 
@@ -34,21 +35,29 @@ class App extends React.Component {
     this.addNotification = this.addNotification.bind(this);
     this.removeSession = this.removeSession.bind(this);
     this.setCurrentRoomIdToAdminUserView = this.setCurrentRoomIdToAdminUserView.bind(
-      this,
+      this
     );
+    this.obtainAccessToken = this.obtainAccessToken.bind(this);
   }
 
   componentDidMount() {
     const sessionID = cookies.get('sessionID');
     console.log("Session id:",sessionID);
-    if (!sessionID || sessionID==='undefined' || sessionID==='null') {
+    if ((!sessionID || sessionID==='undefined' || sessionID==='null') && !sessionStorage.getItem('a0.spajs.txs')) {
       this.props.history.push('/sign-up');
     } else {
       console.log(`getting username, sessionID: ${sessionID}`);
       this.getUsername();
-      userJoinEvent(this.state.name, key=>{
-
-      });
+    }
+  }
+  async componentDidUpdate(prevProps, prevState, snapshot) {
+    const {user} = this.props.auth0;
+    if (user) {
+      cookies.set('sessionID', user.sub);
+      cookies.set('token', user.sub);
+      cookies.set('username', user.nickname);
+      cookies.set('role', 'user');
+      this.getUsername();
     }
   }
 
@@ -59,12 +68,29 @@ class App extends React.Component {
             .then(data => {
                this.setState({name: data.username});
             });*/
-    this.setState({name: cookies.get('username')});
+    if(this.state.name!==cookies.get('username')) {
+      this.setState({name: cookies.get('username')});
+    }
+    if(this.state.name && this.state.name!=="null"){
+      userJoinEvent(this.state.name, key=>{
+
+      });
+    }
   }
 
   setCurrentRoomIdToAdminUserView() {
     this.sessionData = {name: this.state.name, roomId: -2};
     this.setState({roomId: -2});
+  }
+
+  async obtainAccessToken(audience, scope){
+    const {getAccessTokenSilently, user} = this.props.auth0;
+     const accessToken = await getAccessTokenSilently({
+        audience: audience,
+        scope: scope,
+      });
+     return accessToken;
+
   }
 
   /* changeName() {
@@ -148,15 +174,18 @@ class App extends React.Component {
                 name={this.state.name}
                 setCurrentRoomId={this.setCurrentRoomId}
                 setRoomPassword={this.setRoomPassword}
+                        obtainAccessToken={this.obtainAccessToken}
               />
             ) : this.state.roomId === -2 ? (
               <AdminUserView
+                  obtainAccessToken={this.obtainAccessToken}
                 sessionData={this.sessionData}
                 setCurrentRoomId={this.setCurrentRoomId}
                 addNotification={this.addNotification}
               />
             ) : (
               <RoomView
+                  obtainAccessToken={this.obtainAccessToken}
                 roomName={this.state.roomId}
                 sessionData={this.sessionData}
                 setCurrentRoomId={this.setCurrentRoomId}
@@ -172,4 +201,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withAuth0(App);

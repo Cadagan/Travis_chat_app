@@ -1,18 +1,23 @@
+const jwt = require('express-jwt');
+
 require('dotenv').config();
-const {jwt} = require("../../authentication/oauth_keys");
 const jwksRsa = require('jwks-rsa');
 
-export const checkJwt = jwt({
+const checkJwt = jwt({
     // Dynamically provide a signing key based on the kid in the header and the singing keys provided by the JWKS endpoint.
     secret: jwksRsa.expressJwtSecret({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: 'https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json'
+        jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
     }),
 
     // Validate the audience and the issuer.
     audience: process.env.AUTH0_AUDIENCE,
-    issuer: 'https://${process.env.AUTH0_DOMAIN}/',
+    issuer: `https://${process.env.AUTH0_DOMAIN}/`,
     algorithms: ['RS256']
 });
+
+module.exports = {
+    checkJwt,
+}

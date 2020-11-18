@@ -22,13 +22,8 @@ class Login extends Component {
         this.loginWithRedirect = loginWithRedirect;
     }
 
-<<<<<<< HEAD
     responseGoogle(response) {
         const tokenBlob = new Blob([JSON.stringify({access_token: response.accessToken}, null, 2)], {type: 'application/json'});
-=======
-    responseGoogle(response){
-        const tokenBlob = new Blob([JSON.stringify({access_token: response.accessToken}, null, 2)], {type : 'application/json'});
->>>>>>> Log in frontend
         const options = {
             method: 'POST',
             body: tokenBlob,
@@ -60,19 +55,8 @@ class Login extends Component {
     }
 
     async componentDidMount() {
-        axios.get(`${AUTH_HOST}/users/login/success`, {
-            headers: {
-                'accept': 'application/json',
-                'Accept-Language': 'en-US,en;q=0.8',
-                'Content-Type': 'application/json',
-                // 'mode': 'no-cors'
-            }
-        }).then(res => {
-            if (res.status === 200) {
-                console.log("Responde did Mount");
-                console.log(res);
-            }
-        });
+        const {user} = this.props.auth0;
+        console.log(user);
     }
 
     handleSubmit(e) {
