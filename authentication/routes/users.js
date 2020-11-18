@@ -4,12 +4,12 @@ const bcrypt = require ('bcrypt');
 const {client} = require("../database");
 var passport = require('passport');
 const keys = require("../oauth_keys");
-const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
+const GoogleStrategy = require('passport-google-oauth2' ).Strategy;
+var GoogleTokenStrategy = require('passport-google-token').Strategy;
 const jwt = require('jsonwebtoken');
-<<<<<<< HEAD
-=======
 const LocalStrategy = require('passport-local').Strategy;
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
+
+var { generateToken, sendToken } = require('../utils/token.utils');
 
 let user_auth = {};
 
@@ -22,16 +22,6 @@ router.use(function(req, res, next) {
   next();
 });
 
-<<<<<<< HEAD
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-
-=======
 
 
 async function validPassword(password, hash){
@@ -45,6 +35,69 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(user, done) {
     done(null, user);
 });
+
+passport.use(new GoogleTokenStrategy({
+    clientID: keys.google.clientID,
+    clientSecret: keys.google.clientSecret,
+},
+function (accessToken, refreshToken, profile, done) {
+
+        console.log("running google strategy");
+
+        const query = {
+            text: 'SELECT name, username, role, googleId FROM users WHERE googleId = $1',
+            values: [profile.id]
+        };
+        const user = {
+            name: null,
+            username: null,
+            role: null
+        };
+        client.query(query, async(err, queryRes) => {
+            if (err) {
+                return done(err);
+            } else {          
+                if (!queryRes.rowCount) {
+                // Registrar usuario
+                try {
+                    console.log("Inserting into database google user");
+                    insertToDatabase(
+                        profile.displayName, profile.displayName, "INVALIDHASH", profile.emails[0].value, profile.id
+                    ).then(request =>{
+                        //const jsonWebToken = jwt.sign({name: profile.displayName, username: profile.displayName, role: 'user'}, keys.jwt);
+                        console.log("Before send user just registered information");
+                        return done(null, {username: profile.displayName, role: 'user'});
+                    });
+                } catch(e) {
+                return done(null, false);
+                }
+            } else {
+               // Usuario registrado
+                queryRes.rows.forEach(message=>{
+                    user.name = message.name;
+                    user.username = message.username;
+                    user.role = message.role;
+                });
+                //const jsonWebToken = jwt.sign({name: user.name, username: user.username, role: user.role}, keys.jwt);
+                console.log("Before send user already registered information");
+                return done(null, {username: user.username, role: user.role});
+            }
+        }
+    });
+}));
+
+router.post('/auth/google', passport.authenticate('google-token', {session: false}), function(req, res, next) {
+        if (!req.user) {
+            return res.send(401, 'User Not Authenticated');
+        }
+        console.log(req.user);
+        req.auth = {
+            username: req.user.username,
+            role: req.user.role,
+        };
+
+        next();
+    }, generateToken, sendToken);
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
@@ -135,44 +188,16 @@ router.post(
         });
     },
 );
-
-router.get(
-    '/oathsignup',
-    passport.authenticate('google', {scope: ['profile', 'email']}),
-);
-
-router.get(
-    '/oathsignup/callback',
-    passport.authenticate('google', {
-        successRedirect: 'http://localhost:3000/',
-        failureRedirect: 'http://localhost:3000/sign-in',
-    }),
-    (req, res, next) => {
-        console.log('hola in /oathsignup/callback');
-        req.session.save(err => {
-            if (err) {
-                return next(err);
-            }
-
-            const data = {
-                sessionID: req.sessionID,
-                username: req.user.username,
-                token: req.user.token,
-            };
-            res.status(200).send(JSON.stringify(data));
-        });
-    },
-);
-
-
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
+/*
 passport.use(new GoogleStrategy({
       clientID: keys.google.clientID,
       clientSecret: keys.google.clientSecret,
-      callbackURL: "http://localhost:3000/sign-in",
-      passReqToCallback: true
+      callbackURL: "http://localhost:3002/users/auth/google/callback",
+      //passReqToCallback: true
   },
   function(accessToken, refreshToken, profile, done) {
+
+      console.log("running google strategy");
 
       const query = {
         text: 'SELECT name, username, role, googleId FROM users WHERE googleId = $1',
@@ -191,6 +216,7 @@ passport.use(new GoogleStrategy({
           if (!queryRes.rowCount) {
             // Registrar usuario
             try {
+                  console.log("Inserting into database google user");
                   insertToDatabase(
                     profile.displayName, profile.displayName, "INVALIDHASH", profile.emails[0].value, profile.id
                   ).then(request =>{
@@ -219,9 +245,9 @@ passport.use(new GoogleStrategy({
           }
         }
     });
-    }
-  )
+    })
 );
+*/
 
 router.get("/login/success", function(req, res) {
   console.log("/login/success")
@@ -231,15 +257,49 @@ router.get("/login/success", function(req, res) {
   }
 })
 
-router.get("/auth/google", passport.authenticate("google", {scope: ['profile', 'email']}));
-
+// router.get("/auth/google", passport.authenticate("google", {scope: ['profile', 'email']}));
+/*
 router.get(
   '/auth/google/callback',
-    passport.authenticate( 'google', {
-      successRedirect: '/auth/google/success',
-      failureRedirect: '/auth/google/failure'
-    }));
-
+  function(req, res, next) {
+    passport.authenticate('google', { 
+      scope: ['profile', 'email'],
+      successRedirect: 'http://localhost:3000/',
+      failureRedirect: 'http://localhost:3000/sign-up'},
+      (err, user, info) => {
+        console.log(req);
+        req.session.save((err) => {
+          if (err) {
+              return next(err);
+          }
+          console.log("REQ.USER:")
+          console.log(req.user);
+          //req.body = data
+          const data = {sessionID: req.sessionID, username: user.username, token: user.token};
+          user_auth = data;
+          res.status(200).send(JSON.stringify(data));
+          // return 
+          // res.redirect('http://localhost:3000/sign-in');
+    });
+  })(req, res, next);
+});
+*/
+/*
+router.get(
+  '/auth/google/callback',
+    passport.authenticate('google', { 
+      scope: ['profile', 'email'],
+      //bsuccessRedirect: 'http://localhost:3000/sign-in',
+      failureRedirect: 'http://localhost:3000/sign-up',
+      session: false}),
+      (req, res) => {
+        console.log("req:")
+        console.log(req);
+        console.log("res:")
+        console.log(res);
+      }
+  );
+*/
 async function insertToDatabase(name, username, hashedPassword, email, googleId){
   
   console.log(`Inserting new user: '${username}'`);
@@ -260,8 +320,6 @@ async function insertToDatabase(name, username, hashedPassword, email, googleId)
   }
 }
 
-<<<<<<< HEAD
-=======
 async function getUserRole(username) {
     console.log(`Getting user role of username: ${username}`);
     const query = {
@@ -283,6 +341,5 @@ async function getUserRole(username) {
         }
     });
 }
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 
 module.exports = router;

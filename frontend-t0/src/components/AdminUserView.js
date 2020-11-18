@@ -1,17 +1,17 @@
 import React, {useRef} from 'react';
 import UserView from './UserView';
-import {animateScroll} from 'react-scroll';
-import io from 'socket.io-client';
 import {BACKEND_HOST, LOCAL} from '../App';
 import axios from 'axios';
 import $ from 'jquery';
+const {withAuth0} = require("@auth0/auth0-react");
 
-export default class AdminUserView extends React.Component {
+class AdminUserView extends React.Component {
   constructor(props) {
     super(props);
     const ENDPOINT = `${BACKEND_HOST}`;
     this.addNotification = props.addNotification;
     this.setCurrentRoomId = props.setCurrentRoomId;
+    this.obtainAccessToken = props.obtainAccessToken;
     this.sessionData = props.sessionData;
     this.state = {
       users: [],
@@ -72,30 +72,42 @@ export default class AdminUserView extends React.Component {
 
   getNextUsers(amount) {
     const latest = this.state.users[0];
-    //TODO: add auth
-    fetch(`${BACKEND_HOST}/admin/users/before/${amount}`, {
-      // method is POST!?.
-      method: 'POST',
-      body: JSON.stringify(latest), // I could add jwt here
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(r => r.json())
-      .then(r => {
-        const users = r;
-        this.state.users.map(user => users.push(user));
-        this.setState({users: []});
-        this.setState({users: users});
-      });
+    this.obtainAccessToken(`http://localhost:3001`,'read:user').then(accessToken=> {
+      axios.post(`${BACKEND_HOST}/admin/users/before/${amount}`, latest, {
+        headers: {
+          'accept': 'application/json',
+          'Accept-Language': 'en-US,en;q=0.8',
+          'mode': 'cors',
+          'cache': 'default',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        withCredentials: true,
+      })
+          .then(r => {
+            const users = r.data;
+            this.state.users.map(user => users.push(user));
+            this.setState({users: []});
+            this.setState({users: users});
+          });
+    });
   }
 
   loadUsers(amount) {
-    fetch(`${BACKEND_HOST}/admin/users/latest/${amount}`)
-      .then(r => r.json())
-      .then(res => {
-        this.setState({users: res, loadingUsers: false});
-      });
+    this.obtainAccessToken(`http://localhost:3001`,'read:user').then(accessToken=> {
+      axios.get(`${BACKEND_HOST}/admin/users/latest/${amount}`, {
+        headers: {
+          'accept': 'application/json',
+          'Accept-Language': 'en-US,en;q=0.8',
+          'mode': 'cors',
+          'cache': 'default',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        withCredentials: true,
+      })
+          .then(res => {
+            this.setState({users: res.data, loadingUsers: false});
+          });
+    });
   }
 
   handleChange(event) {
@@ -123,6 +135,7 @@ export default class AdminUserView extends React.Component {
                   this.state.users.map((user, i) => {
                     return (
                       <UserView
+                          obtainAccessToken={this.obtainAccessToken}
                         userData={{
                           id: user.id,
                           username: user.username,
@@ -143,3 +156,4 @@ export default class AdminUserView extends React.Component {
     );
   }
 }
+export default withAuth0(AdminUserView);

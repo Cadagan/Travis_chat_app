@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 const LOCAL = false;
 module.exports = {LOCAL};
+if(LOCAL){
+  require('dotenv').config();
+}
 /**
  * Module dependencies.
  */
@@ -13,7 +16,9 @@ var {initialize} = require("../websocket");
 /**
  * Get port from environment and store in Express.
  */
-
+if (!process.env.AUTH0_DOMAIN || !process.env.AUTH0_AUDIENCE) {
+  throw 'Make sure you have AUTH0_DOMAIN, and AUTH0_AUDIENCE in your .env file';
+}
 
 var port = normalizePort(process.env.PORT || '3001');
 app.set('port', "3001");

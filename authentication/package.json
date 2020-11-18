@@ -17,10 +17,8 @@
     "morgan": "~1.9.1",
     "passport": "^0.4.1",
     "passport-google-oauth2": "^0.2.0",
-<<<<<<< HEAD
-=======
+    "passport-google-token": "^0.1.2",
     "passport-local": "^1.0.0",
->>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
     "pg": "^8.4.2"
   }
 }

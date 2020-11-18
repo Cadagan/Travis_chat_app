@@ -1,3 +1,5 @@
+const {checkJwt} = require('../utils/jwtUtils');
+const jwtAuthz = require('express-jwt-authz');
 
 
 require('dotenv').config();
@@ -34,7 +36,7 @@ else {
 }
 
 /* GET home page. */
-router.get('/:roomid/latest/:count', function(req, res, next) {
+router.get('/:roomid/latest/:count', checkJwt, jwtAuthz(['read:message']),function(req, res, next) {
   let count = req.params.count;
   let roomid = req.params.roomid;
 
@@ -80,7 +82,7 @@ async function sendMessages(query, res) {
   });
 }
 
-router.post('/:roomid/before/:count', function(req, res, next) {
+router.post('/:roomid/before/:count', checkJwt,jwtAuthz(['read:message']),function(req, res, next) {
   let count = req.params.count;
   let roomid = req.params.roomid;
   let id = req.body.id;
@@ -114,7 +116,7 @@ function getParsedDate(date) {
       1}-${parsedDate.getDate()}`;
 }
 
-router.post('/new', function(req, res, next) {
+router.post('/new', checkJwt,jwtAuthz(['create:message']),function(req, res, next) {
     // Revisamos el mensaje
     let roomId = req.body.roomId;
     let message = req.body.message;
