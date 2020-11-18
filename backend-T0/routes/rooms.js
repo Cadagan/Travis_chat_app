@@ -8,7 +8,7 @@ const aws = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const multer = require('multer');
 const path = require('path');
-const {LOCAL} = require('../bin/www');
+const {LOCAL} = require("../bin/www");
 var router = express.Router();
 
 var accessKeyId = process.env.accessKeyId;

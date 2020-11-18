@@ -8,7 +8,6 @@ const GoogleStrategy = require('passport-google-oauth2' ).Strategy;
 var GoogleTokenStrategy = require('passport-google-token').Strategy;
 const jwt = require('jsonwebtoken');
 const LocalStrategy = require('passport-local').Strategy;
-
 var { generateToken, sendToken } = require('../utils/token.utils');
 
 let user_auth = {};
@@ -21,8 +20,6 @@ router.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
-
 
 async function validPassword(password, hash){
     return bcrypt.compare(password, hash);
@@ -188,7 +185,35 @@ router.post(
         });
     },
 );
-/*
+
+router.get(
+    '/oathsignup',
+    passport.authenticate('google', {scope: ['profile', 'email']}),
+);
+
+router.get(
+    '/oathsignup/callback',
+    passport.authenticate('google', {
+        successRedirect: 'http://localhost:3000/',
+        failureRedirect: 'http://localhost:3000/sign-in',
+    }),
+    (req, res, next) => {
+        console.log('hola in /oathsignup/callback');
+        req.session.save(err => {
+            if (err) {
+                return next(err);
+            }
+
+            const data = {
+                sessionID: req.sessionID,
+                username: req.user.username,
+                token: req.user.token,
+            };
+            res.status(200).send(JSON.stringify(data));
+        });
+    },
+);
+
 passport.use(new GoogleStrategy({
       clientID: keys.google.clientID,
       clientSecret: keys.google.clientSecret,

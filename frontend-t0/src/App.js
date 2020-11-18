@@ -61,7 +61,6 @@ class App extends React.Component {
     }
   }
 
-
   getUsername() {
     /*fetch(`${BACKEND_HOST}/users/username`)
             .then(res => res.json())

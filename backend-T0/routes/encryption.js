@@ -12,6 +12,7 @@ console.log('Local is: ', LOCAL);
 var myIp;
 if (!LOCAL) {
   console.log('Local inside here is: ', LOCAL);
+
   myIp = execSync(
     'curl http://169.254.169.254/latest/meta-data/public-hostname',
     {encoding: 'utf-8'},

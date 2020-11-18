@@ -6,5 +6,6 @@ authentication/.env
 */.env.prod
 .git
 .idea
+docker-compose-prod.yml
 
 *.pem

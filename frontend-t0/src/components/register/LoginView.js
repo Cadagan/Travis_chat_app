@@ -167,5 +167,4 @@ class Login extends Component {
         );
     }
 }
-
 export default withAuth0(Login);

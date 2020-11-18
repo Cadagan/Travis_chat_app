@@ -31,7 +31,6 @@ router.post('/editUsername', function(req, res, next) {
   let id = req.body.id;
 });
 
-
 router.post('/users/before/:count', function(req, res, next) {
   let count = req.params.count;
   let id = req.body.id;
@@ -471,5 +470,33 @@ router.post('/signup', function(req, res, next) {
     res.status(422).send('Could not add body to database');
   }
 });
+
+---
+router.post(
+  '/signin',
+  passport.authenticate('local', {
+    failureRedirect: '/sign-in',
+    failureFlash: true,
+  }),
+  (req, res, next) => {
+    req.session.save(err => {
+      if (err) {
+        return next(err);
+      }
+
+      getUserRole(req.user.username).then(role => {
+          sessionID: req.sessionID,
+          username: req.user.username,
+          token: req.user.token,
+          role: role,
+        };
+        res.status(200).send(JSON.stringify(data));
+      });
+    });
+  },
+);
+
+
+
 
 ---
