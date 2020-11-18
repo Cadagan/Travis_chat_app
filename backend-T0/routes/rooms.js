@@ -1,3 +1,6 @@
+import {checkJwt} from "../utils/jwtUtils";
+import jwtAuthz from "express-jwt-authz";
+
 require('dotenv').config();
 const url = require('url');
 var express = require('express');
@@ -74,7 +77,7 @@ function checkFileType(file, cb) {
  * @desc Upload post image
  * @access public
  */
-router.post('/:roomid/chat-img-upload', (req, res) => {
+router.post('/:roomid/chat-img-upload', checkJwt, jwtAuthz(['create:image']),(req, res) => {
   chatImgUpload(req, res, error => {
     // console.log( 'requestOkokok', req.file );
     // console.log( 'error', error );
@@ -103,7 +106,7 @@ router.post('/:roomid/chat-img-upload', (req, res) => {
   });
 });
 
-router.get('/:roomid/image', function(req, res, next) {
+router.get('/:roomid/image', checkJwt,jwtAuthz(['read:image']),function(req, res, next) {
   let room_id = req.params.roomid;
   res.append('CurrentInstance', myIp);
   const query = {
@@ -134,7 +137,7 @@ router.get('/:roomid/image', function(req, res, next) {
   });
 });
 
-router.post('/join', function(req, res, next) {
+router.post('/join', checkJwt,jwtAuthz(['interact:room']), function(req, res, next) {
   let id = req.body.roomid;
   let password = req.body.password;
   console.log(`joining with id: ${id} and password ${password}`);
@@ -163,7 +166,7 @@ router.post('/join', function(req, res, next) {
   });
 });
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', checkJwt, jwtAuthz(['read:room']), function(req, res, next) {
   res.append('CurrentInstance', myIp);
   const rooms = [];
   const query = {
@@ -188,7 +191,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.post('/new', function(req, res, next) {
+router.post('/new', checkJwt,jwtAuthz(["create:room"]),function(req, res, next) {
   res.append('CurrentInstance', myIp);
   let roomName = req.body.roomName;
   let isPrivate = req.body.private;

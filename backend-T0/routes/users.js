@@ -1,3 +1,5 @@
+import {checkJwt} from "../utils/jwtUtils";
+
 var express = require('express');
 var router = express.Router();
 const bcrypt = require ('bcrypt');
@@ -5,6 +7,7 @@ const {client} = require("../database");
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 const execSync = require('child_process').execSync;
+const jwtAuthz = require('express-jwt-authz');
 const jwt = require('jsonwebtoken');
 const {LOCAL} = require("../bin/www");
 
@@ -26,7 +29,7 @@ router.post('/logout', function(req, res, next) {
   res.status(200).send('OK');
 });
 
-router.get('/username', function(req, res, next) {
+router.get('/username', checkJwt, jwtAuthz(['read:username']), function(req, res, next) {
   // res.append('CurrentInstance', myIp);
   console.log(req.user);
   if (!req.user) {

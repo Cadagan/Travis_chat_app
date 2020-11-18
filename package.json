@@ -11,5 +11,8 @@
     "devDependencies": {
         "mocha": "latest",
         "chai": "latest"
+    },
+    "dependencies": {
+        "jwks-rsa": "^1.11.0"
     }
 }
