@@ -272,7 +272,6 @@ passport.use(new GoogleStrategy({
     });
     })
 );
-*/
 
 router.get("/login/success", function(req, res) {
   console.log("/login/success")
