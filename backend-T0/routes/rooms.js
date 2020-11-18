@@ -9,13 +9,19 @@ const aws = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const multer = require('multer');
 const path = require('path');
+<<<<<<< HEAD
+=======
 const {LOCAL} = require("../bin/www");
+>>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 var router = express.Router();
 
 var accessKeyId = process.env.accessKeyId;
 var secretAccessKey = process.env.secretAccessKey;
 var bucket_used = process.env.s3_bucket;
 const execSync = require('child_process').execSync;
+
+<<<<<<< HEAD
+const LOCAL = false;
 
 var myIp;
 if (!LOCAL) {
@@ -27,6 +33,18 @@ if (!LOCAL) {
   myIp = '';
 }
 
+=======
+var myIp;
+if (!LOCAL) {
+  myIp = execSync(
+    'curl http://169.254.169.254/latest/meta-data/public-hostname',
+    {encoding: 'utf-8'},
+  );
+} else {
+  myIp = '';
+}
+
+>>>>>>> 6fe614b5fee172a28a9a79c5127e9030f579fffb
 const {client} = require('../database');
 
 // Cita: https://codeytek.com/course/upload-files-images-on-amazon-web-services-course/upload-files-images-on-amazon-web-services-content/file-uploads-on-amazon-web-services-aws-multer-s3-node-js-react-js-express-aws-sdk/
