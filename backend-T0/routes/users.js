@@ -18,6 +18,9 @@ if (!LOCAL) {
 } else {
   myIp = '';
 }
+const frontend = LOCAL? "http://localhost:3000" : "http://grupo21.ml";
+
+
 async function validPassword(password, hash){
   return bcrypt.compare(password, hash);
 }
@@ -128,8 +131,8 @@ router.get(
 router.get(
   '/oathsignup/callback',
   passport.authenticate('google', {
-    successRedirect: 'http://localhost:3000/',
-    failureRedirect: 'http://localhost:3000/sign-in',
+    successRedirect: frontend,
+    failureRedirect: `${frontend}/sign-in`,
   }),
   (req, res, next) => {
     console.log('hola in /oathsignup/callback');
