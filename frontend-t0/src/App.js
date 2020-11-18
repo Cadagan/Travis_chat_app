@@ -12,7 +12,7 @@ import {withAuth0} from "@auth0/auth0-react";
 
 const cookies = new Cookies();
 
-export const LOCAL = true;
+export const LOCAL = false;
 export const BACKEND_HOST = LOCAL
   ? 'http://localhost:3001'
   : 'https://www.grupo21.ml';
