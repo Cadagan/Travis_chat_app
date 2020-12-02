@@ -29,7 +29,7 @@ class UserView extends React.Component {
     if (input !== '666') {
       console.log(`id: ${this.id}, username: ${this.username}`)
       const data = {id: this.id, username: input};
-      this.obtainAccessToken(`http://localhost:3001`,'update:user').then(accessToken=>{
+      this.obtainAccessToken(`${BACKEND_HOST}`,'update:user').then(accessToken=>{
         axios.post(`${BACKEND_HOST}/admin/editUsername`, data,{
           headers: {
             'accept': 'application/json',
@@ -54,7 +54,7 @@ class UserView extends React.Component {
     if (input !== '666') {
       const data = {id: this.id, name: input};
 
-      this.obtainAccessToken(`http://localhost:3001`,'update:user').then(accessToken=>{
+      this.obtainAccessToken(`${BACKEND_HOST}`,'update:user').then(accessToken=>{
         axios.post(`${BACKEND_HOST}/admin/editName`, data,{
           headers: {
             'accept': 'application/json',
@@ -78,7 +78,7 @@ class UserView extends React.Component {
     console.log(`editEmail input: ${input}`);
     if (input !== '666') {
       const data = {id: this.id, email: input};
-      this.obtainAccessToken(`http://localhost:3001`,'update:user').then(accessToken=>{
+      this.obtainAccessToken(`${BACKEND_HOST}`,'update:user').then(accessToken=>{
         axios.post(`${BACKEND_HOST}/admin/editEmail`,data, {
           headers: {
             'accept': 'application/json',
@@ -102,7 +102,7 @@ class UserView extends React.Component {
     console.log(`editRole input: ${input}`);
     if (input !== '666') {
       const data = {id: this.id, role: input};
-      this.obtainAccessToken(`http://localhost:3001`,'update:user').then(accessToken=>{
+      this.obtainAccessToken(`${BACKEND_HOST}`,'update:user').then(accessToken=>{
         axios.post(`${BACKEND_HOST}/admin/editRole`, data,{
           headers: {
             'accept': 'application/json',
@@ -126,7 +126,7 @@ class UserView extends React.Component {
     console.log(`editGoogleid input: ${input}`);
     if (input !== '666') {
       const data = {id: this.id, googleid: input};
-      this.obtainAccessToken(`http://localhost:3001`,'update:user').then(accessToken=>{
+      this.obtainAccessToken(`${BACKEND_HOST}`,'update:user').then(accessToken=>{
         axios.post(`${BACKEND_HOST}/admin/editGoogleid`, data,{
           headers: {
             'accept': 'application/json',

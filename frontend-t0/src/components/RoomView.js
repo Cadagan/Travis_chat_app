@@ -45,7 +45,7 @@ class RoomView extends React.Component {
         const data = new FormData();// If file selected
         if ( this.state.selectedFile ) {
             data.append( 'chatImage', this.state.selectedFile, this.state.selectedFile.name );
-            this.obtainAccessToken(`http://localhost:3001`,'create:image').then(accessToken=> {
+            this.obtainAccessToken(`${BACKEND_HOST}`,'create:image').then(accessToken=> {
                 axios.post(`${BACKEND_HOST}/rooms/${this.sessionData.roomId}/chat-img-upload`, data, {
                     headers: {
                         'accept': 'application/json',
@@ -138,7 +138,7 @@ class RoomView extends React.Component {
         }
     }
     loadMessages(amount){
-        this.obtainAccessToken(`http://localhost:3001`,'read:message').then(accessToken=> {
+        this.obtainAccessToken(`${BACKEND_HOST}`,'read:message').then(accessToken=> {
             axios.get(`${BACKEND_HOST}/messages/${this.sessionData.roomId}/latest/${amount}`, {
                 headers: {
                     'accept': 'application/json',
@@ -184,7 +184,7 @@ class RoomView extends React.Component {
             sender: pgpKey.id()
         };
         onMessageSend(data, (cipherData, keyData) => {
-            this.obtainAccessToken(`http://localhost:3001`, 'create:message').then(accessToken => {
+            this.obtainAccessToken(`${BACKEND_HOST}`, 'create:message').then(accessToken => {
                 axios.post(`${BACKEND_HOST}/messages/new`, cipherData, {
                     headers: {
                         'accept': 'application/json',
@@ -220,7 +220,7 @@ class RoomView extends React.Component {
     }
   getNextMessages(amount) {
     const latest = this.state.messages[0];
-      this.obtainAccessToken(`http://localhost:3001`, 'read:message').then(accessToken => {
+      this.obtainAccessToken(`${BACKEND_HOST}`, 'read:message').then(accessToken => {
           axios.post(`${BACKEND_HOST}/messages/${this.sessionData.roomId}/before/${amount}`, latest, {
               headers: {
                   'accept': 'application/json',
@@ -247,7 +247,7 @@ class RoomView extends React.Component {
 
 
   getRoomImage() {
-      this.obtainAccessToken(`http://localhost:3001`, 'read:image').then(accessToken => {
+      this.obtainAccessToken(`${BACKEND_HOST}`, 'read:image').then(accessToken => {
           axios.get(`${BACKEND_HOST}/rooms/${this.sessionData.roomId}/image`,{
               headers: {
                   'accept': 'application/json',

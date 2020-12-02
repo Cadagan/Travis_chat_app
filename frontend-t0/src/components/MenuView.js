@@ -32,7 +32,7 @@ class MenuView extends React.Component {
   }
 
   loadRooms() {
-    this.obtainAccessToken(`http://localhost:3001`,'read:room').then(accessToken=>{
+    this.obtainAccessToken(`${BACKEND_HOST}`,'read:room').then(accessToken=>{
       axios.get(`${BACKEND_HOST}/rooms`, {
         headers: {
           'accept': 'application/json',
@@ -64,7 +64,7 @@ class MenuView extends React.Component {
       private: this.state.privateForm,
       password: password,
     };
-    this.obtainAccessToken(`http://localhost:3001`,'create:room').then(accessToken=> {
+    this.obtainAccessToken(`${BACKEND_HOST}`,'create:room').then(accessToken=> {
       axios.post(`${BACKEND_HOST}/rooms/new`, data, {
         headers: {
           'accept': 'application/json',

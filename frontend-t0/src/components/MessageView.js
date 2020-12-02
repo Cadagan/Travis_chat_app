@@ -29,7 +29,7 @@ class MessageView extends React.Component {
     if (input !== '666') {
       console.log(`id: ${this.id}, message: ${input}`);
       const data = {id: this.id, message: input};
-      this.obtainAccessToken(`http://localhost:3001`,'update:message').then(accessToken=> {
+      this.obtainAccessToken(`${BACKEND_HOST}`,'update:message').then(accessToken=> {
         axios.post(`${BACKEND_HOST}/admin/editMessage`, data, {
           headers: {
             'accept': 'application/json',
@@ -52,7 +52,7 @@ class MessageView extends React.Component {
     console.log(`censureMessage input: ${this.id}`);
     console.log(`id: ${this.id}`);
     const data = {id: this.id};
-    this.obtainAccessToken(`http://localhost:3001`,'update:message').then(accessToken=> {
+    this.obtainAccessToken(`${BACKEND_HOST}`,'update:message').then(accessToken=> {
       axios.post(`${BACKEND_HOST}/admin/censureMessage`, data, {
         headers: {
           'accept': 'application/json',

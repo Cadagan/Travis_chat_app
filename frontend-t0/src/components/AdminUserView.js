@@ -72,7 +72,7 @@ class AdminUserView extends React.Component {
 
   getNextUsers(amount) {
     const latest = this.state.users[0];
-    this.obtainAccessToken(`http://localhost:3001`,'read:user').then(accessToken=> {
+    this.obtainAccessToken(`${BACKEND_HOST}`,'read:user').then(accessToken=> {
       axios.post(`${BACKEND_HOST}/admin/users/before/${amount}`, latest, {
         headers: {
           'accept': 'application/json',
@@ -93,7 +93,7 @@ class AdminUserView extends React.Component {
   }
 
   loadUsers(amount) {
-    this.obtainAccessToken(`http://localhost:3001`,'read:user').then(accessToken=> {
+    this.obtainAccessToken(`${BACKEND_HOST}`,'read:user').then(accessToken=> {
       axios.get(`${BACKEND_HOST}/admin/users/latest/${amount}`, {
         headers: {
           'accept': 'application/json',

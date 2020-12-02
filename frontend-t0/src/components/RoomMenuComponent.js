@@ -27,7 +27,7 @@ class RoomMenuComponent extends React.Component {
       password = prompt('Password');
     }
     let data = {roomid: this.roomId, password: password};
-    this.obtainAccessToken(`http://localhost:3001`,'interact:room').then(accessToken=> {
+    this.obtainAccessToken(`${BACKEND_HOST}`,'interact:room').then(accessToken=> {
       axios.post(`${BACKEND_HOST}/rooms/join`, data, {
         headers: {
           'accept': 'application/json',
@@ -55,7 +55,7 @@ class RoomMenuComponent extends React.Component {
   deleteRoom() {
     let data = {roomid: this.roomId};
     console.log(`deleting room with room id: ${this.roomId}`);
-    this.obtainAccessToken(`http://localhost:3001`,'delete:room').then(accessToken=> {
+    this.obtainAccessToken(`${BACKEND_HOST}`,'delete:room').then(accessToken=> {
       axios.post(`${BACKEND_HOST}/admin/deleteRoom`, data, {
         headers: {
           'accept': 'application/json',
