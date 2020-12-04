@@ -95,33 +95,18 @@ router.post('/signup', function(req, res, next) {
   }
 });
 
-router.post(
-  '/signin',
-  passport.authenticate('local', {
-    failureRedirect: '/sign-in',
-    failureFlash: true,
-  }),
-  (req, res, next) => {
-    // res.append('CurrentInstance', myIp);
+router.post('/signin', (req, res, next) => {
+  // res.append('CurrentInstance', myIp);
+  getUserRole(req.body.username).then(role => {
+    const data = {
+      username: req.body.username,
+      role: role,
+    };
+    console.log(`The role sent with signin is: ${role}`);
+    res.status(200).send(JSON.stringify(data));
+  });
+});
 
-    req.session.save(err => {
-      if (err) {
-        return next(err);
-      }
-
-      getUserRole(req.user.username).then(role => {
-        const data = {
-          sessionID: req.sessionID,
-          username: req.user.username,
-          token: req.user.token,
-          role: role,
-        };
-        console.log(`The role sent with signin is: ${role}`);
-        res.status(200).send(JSON.stringify(data));
-      });
-    });
-  },
-);
 
 router.get(
   '/oathsignup',

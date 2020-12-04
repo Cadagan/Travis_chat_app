@@ -18,7 +18,7 @@ export const BACKEND_HOST = LOCAL
   : 'https://www.grupo21.ml';
 export const AUTH_HOST = LOCAL
   ? 'http://localhost:3002' 
-  : 'http://grupo21.ml/auth';
+  : 'https://grupo21.ml';
 
 class App extends React.Component {
 
@@ -58,6 +58,19 @@ class App extends React.Component {
       cookies.set('username', user.nickname);
       cookies.set('role', 'user');
       this.getUsername();
+      let data = {username: cookies.get('username')};
+      fetch(`${BACKEND_HOST}/users/signin`, {
+        method: 'POST', // or 'PUT'
+        body: JSON.stringify(data), // data can be `string` or {object}!
+        //credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => response.json())
+        .then(data => {
+          cookies.set('role', data.role);
+        });
     }
   }
 
