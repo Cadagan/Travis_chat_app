@@ -11,11 +11,12 @@ var usersRouter = require('./routes/users');
 var roomsRouter = require('./routes/rooms');
 var encryptionRouter = require('./routes/encryption');
 var adminRouter = require('./routes/admin');
+const {LOCAL} = require("./bin/www");
 
 var app = express();
 app.use(
   cors({
-    origin: 'http://localhost:3000', // allow to server to accept request from different origin
+    origin: LOCAL?'http://localhost:3000':"https://www.grupo21frontend.ml", // allow to server to accept request from different origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // allow session cookie from browser to pass through
   }),
