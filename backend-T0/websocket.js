@@ -28,25 +28,43 @@ function initialize(server, LOCAL) {
                 res.end();
             }
         });
-      io.adapter(redis({ host: 'master.redis-cluster-2.f8l4hc.use2.cache.amazonaws.com', port: 6379, password: "grupo-21-redis-alkSNsSDAlwijd" }));
+        io.adapter(redis({ host: 'master.redis-cluster-2.f8l4hc.use2.cache.amazonaws.com', port: 6379, password: "grupo-21-redis-alkSNsSDAlwijd" }));
     }
     console.log("Initialized socket.io server");
     io.on('message-added', (socket) => {
         console.log('a message was put onto the database');
         //io.adapter.clients([room], (err, clients) => {
-          //console.log(clients);
+        //console.log(clients);
     });
-  var backend_socket = io.of('/backend');
-  backend_socket.on('message-added', function(socket){
-    socket.on('message-added', function(message){
-      socket.join(message);
+    var backend_socket = io.of('/backend');
+    backend_socket.on('auth-message', function(socket){
+        socket.on('auth-message', function(message){
+            console.log("Getting auth message");
+            socket.join(message);
 
-      //log other socket.io-id's in the message
-      backend_socket.adapter.clients([message], (err, clients) => {
-        console.log(clients);
-      });
+            //log other socket.io-id's in the message
+            backend_socket.adapter.clients([message], (err, clients) => {
+                console.log(clients);
+            });
+        });
     });
-  });
+    backend_socket.on('message-added', function(socket){
+        socket.on('message-added', function(message){
+            socket.join(message);
+
+            //log other socket.io-id's in the message
+            backend_socket.adapter.clients([message], (err, clients) => {
+                console.log(clients);
+            });
+        });
+    });
+}
+
+function emitAuthMessageToRoom(message, roomId) {
+    console.log("Emitting auth-message!")
+    io.emit("auth-message", {
+        message
+    });
 }
 
 
@@ -81,7 +99,26 @@ function emitMessageSent(message, username, roomId) {
     });
 }
 
+function emitEncryptedMessage(message, username, roomId, sender, receiver){
+    const date = new Date();
+    const hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+    const minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+    const message_time = `${hours}:${minutes}`;
+    io.emit('message-added', {
+        message: message,
+        username: username,
+        roomId: roomId,
+        date: "Today",
+        time: message_time,
+        sender: sender,
+        receiver: receiver,
+    });
+}
+
 module.exports = {
+    io,
     emitMessageSent,
+    emitEncryptedMessage,
+    emitAuthMessageToRoom,
     initialize
 };

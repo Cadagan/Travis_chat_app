@@ -1,10 +1,11 @@
 node_modules/
 */node_modules
-.env
+authentication/.env
 */.env
 .env.prod
 */.env.prod
 .git
 .idea
+docker-compose-prod.yml
 
 *.pem

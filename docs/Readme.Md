@@ -1,5 +1,38 @@
 # Documentación 
+El presente README.md contiene la documentación solicitada para la Entrega 2.
 
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Released]
+
+## [2.0.0] - 2020-11-09
+### Added
+* Added old github development files
+* Google auth keys to .env
+* Update chatroomEvents.js
+* Jwt secret
+
+Authored-by: [@kylevon](https://github.com/kylevon).
+
+Co-authored-by: [@mathiasvaldebenito](https://github.com/mathiasvaldebenito).
+
+## [2.0.1] - 2020-11-10
+### Added
+* Symbolic tests
+
+## [2.0.2] - 2020-11-10
+### Added
+* Correct de deployment
+
+## [2.1.0] - 2020-11-10
+### Added
+* Merge tests and deployment
+---
+# Anexo
 El presente README.md contiene la documentación solicitada para la Entrega 1.
 
 ## Documentación Headers Load Balancer

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {BACKEND_HOST} from "../../App";
+import {AUTH_HOST} from "../../App";
 
 export default class SignUp extends Component {
     constructor(props) {
@@ -16,7 +16,7 @@ export default class SignUp extends Component {
                         email: this.state.email,
                         password: this.state.password};
 
-        fetch(`${BACKEND_HOST}/users/signup`,
+        fetch(`${AUTH_HOST}/users/signup`,
             {
                 method: 'POST', // or 'PUT'
                 body: JSON.stringify(data), // data can be `string` or {object}!
@@ -77,12 +77,6 @@ export default class SignUp extends Component {
                                 Already registered <a href="/sign-in">sign in?</a>
                             </p>
                         </form>
-                    <div className="google-btn">
-                        <div className="google-icon-wrapper">
-                            <img className="google-icon-svg" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
-                        </div>
-                        <p className="btn-text"><b>Sign up with Google</b></p>
-                    </div>
                 </div>
                 </div>
             </div>
