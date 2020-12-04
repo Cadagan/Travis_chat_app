@@ -15,8 +15,8 @@ ReactDOM.render(
     <Auth0Provider
       domain={config.AUTH0_DOMAIN}
       clientId={config.AUTH0_CLIENT_ID}
-      redirectUri={LOCAL ? 'http://localhost:3000' : 'https://www.grupo21frontend.ml'}
-      audience={LOCAL ? 'http://localhost:3001' : "https://grupo21frontend.ml"}
+      redirectUri={LOCAL ? 'http://localhost:3000' : "https://www.grupo21frontend.ml"}
+      audience={LOCAL ? 'http://localhost:3001' : config.AUTH0_AUDIENCE}
       scope={
         'read:username create:image read:image interact:room read:room create:room read:message ' +
         'create:message read:user update:message update:room delete:room update:user'
