@@ -2,6 +2,7 @@ import React from 'react';
 import MenuView from './components/MenuView';
 import RoomView from './components/RoomView';
 import AdminUserView from './components/AdminUserView';
+import MonitorComponent from './components/MonitorComponent';
 
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import {Button} from 'react-bootstrap';
