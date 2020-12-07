@@ -9,6 +9,7 @@ import session from './sessions';
 import {Auth0Provider} from '@auth0/auth0-react';
 import config from './config';
 import {LOCAL} from './App';
+import MonitorComponent from "./components/MonitorComponent";
 
 ReactDOM.render(
   <BrowserRouter>
@@ -30,6 +31,7 @@ ReactDOM.render(
           )}
         />
         <Route path="/sign-up" component={SignUp} />
+        <Route path={"/monitor"} component={MonitorComponent}/>
       </Switch>
     </Auth0Provider>
     ,
@@ -42,3 +44,4 @@ ReactDOM.render(
 // Learn more about service workers: https://bit.ly/CRA-PWA
 // serviceWorker.unregister();
 serviceWorker.unregister();
+

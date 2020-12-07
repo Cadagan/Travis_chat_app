@@ -7,8 +7,8 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import {Button} from 'react-bootstrap';
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import Cookies from 'universal-cookie';
-import {userJoinEvent} from "./components/events/chatroomEvents";
-import {withAuth0} from "@auth0/auth0-react";
+import {userJoinEvent} from './components/events/chatroomEvents';
+import {withAuth0} from '@auth0/auth0-react';
 
 const cookies = new Cookies();
 
@@ -16,12 +16,9 @@ export const LOCAL = false;
 export const BACKEND_HOST = LOCAL
   ? 'http://localhost:3001'
   : 'https://www.grupo21.ml';
-export const AUTH_HOST = LOCAL
-  ? 'http://localhost:3002' 
-  : 'https://grupo21.ml';
+export const AUTH_HOST = LOCAL ? 'http://localhost:3002' : 'https://grupo21.ml';
 
 class App extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {roomId: -1, name: '', roomPassword: ''};
@@ -35,15 +32,21 @@ class App extends React.Component {
     this.addNotification = this.addNotification.bind(this);
     this.removeSession = this.removeSession.bind(this);
     this.setCurrentRoomIdToAdminUserView = this.setCurrentRoomIdToAdminUserView.bind(
-      this
+      this,
+    );
+    this.setCurrentRoomIdToAdminMonitorView = this.setCurrentRoomIdToAdminMonitorView.bind(
+      this,
     );
     this.obtainAccessToken = this.obtainAccessToken.bind(this);
   }
 
   componentDidMount() {
     const sessionID = cookies.get('sessionID');
-    console.log("Session id:",sessionID);
-    if ((!sessionID || sessionID==='undefined' || sessionID==='null') && !sessionStorage.getItem('a0.spajs.txs')) {
+    console.log('Session id:', sessionID);
+    if (
+      (!sessionID || sessionID === 'undefined' || sessionID === 'null') &&
+      !sessionStorage.getItem('a0.spajs.txs')
+    ) {
       this.props.history.push('/sign-up');
     } else {
       console.log(`getting username, sessionID: ${sessionID}`);
@@ -80,13 +83,11 @@ class App extends React.Component {
             .then(data => {
                this.setState({name: data.username});
             });*/
-    if(this.state.name!==cookies.get('username')) {
+    if (this.state.name !== cookies.get('username')) {
       this.setState({name: cookies.get('username')});
     }
-    if(this.state.name && this.state.name!=="null"){
-      userJoinEvent(this.state.name, key=>{
-
-      });
+    if (this.state.name && this.state.name !== 'null') {
+      userJoinEvent(this.state.name, key => {});
     }
   }
 
@@ -94,15 +95,18 @@ class App extends React.Component {
     this.sessionData = {name: this.state.name, roomId: -2};
     this.setState({roomId: -2});
   }
+  setCurrentRoomIdToAdminMonitorView() {
+    this.sessionData = {name: this.state.name, roomId: -2};
+    this.setState({roomId: -3});
+  }
 
-  async obtainAccessToken(audience, scope){
+  async obtainAccessToken(audience, scope) {
     const {getAccessTokenSilently, user} = this.props.auth0;
-     const accessToken = await getAccessTokenSilently({
-        audience: audience,
-        scope: scope,
-      });
-     return accessToken;
-
+    const accessToken = await getAccessTokenSilently({
+      audience: audience,
+      scope: scope,
+    });
+    return accessToken;
   }
 
   /* changeName() {
@@ -180,24 +184,38 @@ class App extends React.Component {
               ) : (
                 <div></div>
               )}
+              {cookies.get('role') == 'admin' ? (
+                <Button onClick={this.setCurrentRoomIdToAdminMonitorView}>
+                  Ver monitoreo
+                </Button>
+              ) : (
+                <div></div>
+              )}
             </div>
             {this.state.roomId === -1 ? (
               <MenuView
                 name={this.state.name}
                 setCurrentRoomId={this.setCurrentRoomId}
                 setRoomPassword={this.setRoomPassword}
-                        obtainAccessToken={this.obtainAccessToken}
+                obtainAccessToken={this.obtainAccessToken}
               />
             ) : this.state.roomId === -2 ? (
               <AdminUserView
-                  obtainAccessToken={this.obtainAccessToken}
+                obtainAccessToken={this.obtainAccessToken}
+                sessionData={this.sessionData}
+                setCurrentRoomId={this.setCurrentRoomId}
+                addNotification={this.addNotification}
+              />
+            ) : this.state.roomId === -3 ? (
+              <MonitorComponent
+                obtainAccessToken={this.obtainAccessToken}
                 sessionData={this.sessionData}
                 setCurrentRoomId={this.setCurrentRoomId}
                 addNotification={this.addNotification}
               />
             ) : (
               <RoomView
-                  obtainAccessToken={this.obtainAccessToken}
+                obtainAccessToken={this.obtainAccessToken}
                 roomName={this.state.roomId}
                 sessionData={this.sessionData}
                 setCurrentRoomId={this.setCurrentRoomId}
@@ -214,3 +232,4 @@ class App extends React.Component {
 }
 
 export default withAuth0(App);
+
